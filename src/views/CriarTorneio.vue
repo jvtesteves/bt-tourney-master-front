@@ -4,7 +4,6 @@
     <p class="subtitulo">Preencha as informações abaixo para criar seu evento.</p>
 
     <form @submit.prevent="submeterFormulario" class="form-torneio">
-      <!-- O restante do seu template (inputs e labels) continua igual -->
       <div class="form-grupo">
         <label for="nome">Nome do Torneio</label>
         <input type="text" id="nome" v-model="form.nome" required />
@@ -31,16 +30,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { torneios } from '../store' // 1. Importe a nossa store
+import { torneios, type Torneio } from '../store' // Importa a store e o tipo Torneio
 
 const router = useRouter()
 
-// Renomeado para 'form' para clareza
-const form = ref({
-  id: Date.now(), // Adiciona um ID único simples
+// Tipifica o formulário. Usamos 'Omit' para criar um tipo baseado em 'Torneio'
+// mas sem a propriedade 'id', que será gerada depois.
+type FormularioTorneio = Omit<Torneio, 'id'>
+
+const form = ref<FormularioTorneio>({
   nome: '',
   local: '',
   dataInicio: '',
@@ -48,11 +49,15 @@ const form = ref({
 })
 
 function submeterFormulario() {
-  // 2. Adiciona o novo torneio à lista compartilhada
-  torneios.value.push({ ...form.value })
+  const novoTorneio: Torneio = {
+    id: Date.now(), // Adiciona o ID no momento da criação
+    ...form.value,
+  }
 
-  // 3. Redireciona o usuário para a página de gerenciamento
-  router.push('/gerenciar-torneios')
+  torneios.value.push(novoTorneio)
+
+  // Redireciona o utilizador para a página de gerenciamento correta
+  router.push('/organizador/gerenciar-torneios')
 }
 </script>
 

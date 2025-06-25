@@ -26,18 +26,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { torneios } from '../store' // Usa a mesma store dos organizadores
+import { torneios } from '../store'
 
 const router = useRouter()
 
-function verDetalhes(id) {
+function verDetalhes(id: number) {
   router.push(`/torneio/${id}`)
 }
 
 // Função para formatar a data para um padrão mais legível
-function formatarData(data) {
+function formatarData(data: string): string {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`

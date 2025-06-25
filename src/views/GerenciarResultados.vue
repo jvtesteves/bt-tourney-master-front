@@ -1,7 +1,7 @@
 <template>
   <div class="gerenciar-resultados-container">
     <div v-if="torneio">
-      <router-link to="/gerenciar-torneios" class="voltar-link"
+      <router-link to="/organizador/gerenciar-torneios" class="voltar-link"
         >&larr; Voltar para Meus Torneios</router-link
       >
       <h2 class="titulo">Gerenciar Resultados: {{ torneio.nome }}</h2>
@@ -39,18 +39,18 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { torneios } from '../store'
-import { chaves } from '../store/chaves'
+import { torneios, type Torneio } from '../store'
+import { chaves, type Jogo } from '../store/chaves'
 
 const route = useRoute()
 const torneioId = Number(route.params.id)
 
-const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
+const torneio = computed(() => torneios.value.find((t: Torneio) => t.id === torneioId))
 // Acessa diretamente os jogos do torneio na store, que agora são reativos
-const jogos = computed(() => chaves.value[torneioId] || [])
+const jogos = computed((): Jogo[] => chaves.value[torneioId] || [])
 
 // Os resultados são salvos automaticamente graças ao v-model.
 // Para um app real, teríamos um botão "Salvar" que faria uma chamada de API.

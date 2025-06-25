@@ -17,16 +17,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { inscricoes } from '../store/inscricoes'
+import type { Inscricao } from '../store/types' // <-- CORREÇÃO: Importa de 'types.ts'
 
 // Para este exemplo, consideramos que o jogador logado é "Jogador 1"
+// Num sistema real, este nome viria da store de autenticação.
 const nomeJogadorLogado = 'Jogador 1'
 
 const meusTorneios = computed(() => {
-  // Filtra as inscrições para encontrar aquelas que incluem o jogador logado
-  return inscricoes.value.filter((inscricao) => inscricao.dupla.includes(nomeJogadorLogado))
+  // Usamos uma asserção de tipo para garantir que o TypeScript entenda a estrutura
+  return (inscricoes.value as Inscricao[]).filter((inscricao: Inscricao) =>
+    inscricao.dupla.includes(nomeJogadorLogado),
+  )
 })
 </script>
 

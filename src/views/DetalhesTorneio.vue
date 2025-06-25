@@ -32,20 +32,20 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { torneios } from '../store'
-import { chaves } from '../store/chaves' // Importa a store de chaves
+import { torneios, type Torneio } from '../store'
+import { chaves } from '../store/chaves'
 
 const route = useRoute()
 const torneioId = Number(route.params.id)
 
-const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
+const torneio = computed(() => torneios.value.find((t: Torneio) => t.id === torneioId))
 // Verifica se existem chaves para este torneio
 const chavesForamGeradas = computed(() => !!chaves.value[torneioId])
 
-function formatarData(data) {
+function formatarData(data: string): string {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
   return `${dia}/${mes}/${ano}`

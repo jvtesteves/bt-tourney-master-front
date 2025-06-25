@@ -2,7 +2,9 @@
   <div class="gerenciar-container">
     <div class="header">
       <h2 class="titulo">Seus Torneios</h2>
-      <router-link to="/criar-torneio" class="btn-novo-torneio">Criar Novo Torneio</router-link>
+      <router-link to="/organizador/criar-torneio" class="btn-novo-torneio"
+        >Criar Novo Torneio</router-link
+      >
     </div>
 
     <div v-if="torneios.length === 0" class="sem-torneios">
@@ -27,20 +29,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { torneios } from '../store'
-import { inscricoes } from '../store/inscricoes' // Importa a store de inscrições
+import { inscricoes } from '../store/inscricoes'
+import type { Inscricao } from '../store/types' // <-- CORREÇÃO: Importa de 'types.ts'
 
 const router = useRouter()
 
-function verInscricoes(torneioId) {
-  router.push(`/gerenciar-torneios/${torneioId}/inscricoes`)
+function verInscricoes(torneioId: number) {
+  router.push(`/organizador/gerenciar-torneios/${torneioId}/inscricoes`)
 }
 
 // Função para contar quantas inscrições um torneio possui
-function contarInscricoes(torneioId) {
-  return inscricoes.value.filter((i) => i.torneioId === torneioId).length
+function contarInscricoes(torneioId: number): number {
+  // Usamos uma asserção de tipo para garantir que o TypeScript entenda a estrutura
+  return (inscricoes.value as Inscricao[]).filter((i: Inscricao) => i.torneioId === torneioId)
+    .length
 }
 </script>
 

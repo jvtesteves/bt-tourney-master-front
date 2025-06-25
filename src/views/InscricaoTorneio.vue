@@ -3,8 +3,8 @@
     <div v-if="torneio">
       <h2 class="titulo">Inscrição para: {{ torneio.nome }}</h2>
       <p class="subtitulo">Preencha os dados da dupla para confirmar a participação.</p>
-
       <form @submit.prevent="realizarInscricao" class="form-inscricao">
+        <!-- ... o seu template do formulário permanece o mesmo ... -->
         <div class="form-grupo">
           <label for="jogador1">Nome do Jogador 1</label>
           <input type="text" id="jogador1" v-model="form.jogador1" required />
@@ -22,11 +22,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { torneios } from '../store'
 import { inscricoes } from '../store/inscricoes'
+import type { Inscricao } from '../store/types' // Importa o tipo central
 
 const route = useRoute()
 const router = useRouter()
@@ -34,25 +35,25 @@ const torneioId = Number(route.params.id)
 
 const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
 
-const form = ref({
-  jogador1: '',
-  jogador2: '',
-})
+const form = ref({ jogador1: '', jogador2: '' })
 
 function realizarInscricao() {
-  const novaInscricao = {
+  if (!torneio.value) return // Guarda de segurança
+
+  const novaInscricao: Inscricao = {
     id: Date.now(),
     torneioId: torneioId,
     nomeTorneio: torneio.value.nome,
     dupla: [form.value.jogador1, form.value.jogador2],
   }
+
   inscricoes.value.push(novaInscricao)
-  console.log('Nova Inscrição:', novaInscricao)
   router.push('/inscricao-confirmada')
 }
 </script>
 
 <style scoped>
+/* Estilos permanecem os mesmos */
 .inscricao-container {
   max-width: 800px;
   margin: 2rem auto;

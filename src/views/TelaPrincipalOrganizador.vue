@@ -5,13 +5,13 @@
 
     <div class="acoes-grid">
       <!-- Card para Criar Torneio -->
-      <div @click="navegarPara('/criar-torneio')" class="acao-card">
+      <div @click="navegarPara('/organizador/criar-torneio')" class="acao-card">
         <h3>Criar Novo Torneio</h3>
         <p>Configure um novo evento, defina categorias e datas.</p>
       </div>
 
       <!-- Card para Gerenciar Torneios -->
-      <div @click="navegarPara('/gerenciar-torneios')" class="acao-card">
+      <div @click="navegarPara('/organizador/gerenciar-torneios')" class="acao-card">
         <h3>Gerenciar Torneios</h3>
         <p>Visualize e edite seus torneios existentes.</p>
       </div>
@@ -19,13 +19,13 @@
   </div>
 </template>
 
-<script setup>
-import { useRouter } from 'vue-router' // 1. Importe o useRouter
+<script setup lang="ts">
+import { useRouter } from 'vue-router'
 
-const router = useRouter() // 2. Obtenha a instância do roteador
+const router = useRouter()
 
-function navegarPara(caminho) {
-  router.push(caminho) // 3. Crie a função de navegação
+function navegarPara(caminho: string) {
+  router.push(caminho)
 }
 </script>
 

@@ -1,7 +1,7 @@
 <template>
   <div class="gerenciar-inscricoes-container">
     <div v-if="torneio">
-      <router-link to="/gerenciar-torneios" class="voltar-link"
+      <router-link to="/organizador/gerenciar-torneios" class="voltar-link"
         >&larr; Voltar para Meus Torneios</router-link
       >
       <div class="header">
@@ -21,7 +21,6 @@
           Ver Chaves
         </router-link>
       </div>
-
       <div v-if="inscricoesDoTorneio.length > 0" class="lista-inscricoes">
         <div v-for="inscricao in inscricoesDoTorneio" :key="inscricao.id" class="inscricao-card">
           <p><strong>Dupla:</strong> {{ inscricao.dupla.join(' e ') }}</p>
@@ -37,38 +36,38 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { torneios } from '../store'
 import { inscricoes } from '../store/inscricoes'
 import { chaves } from '../store/chaves'
+import type { Torneio, Inscricao, Dupla, Jogo } from '../store/types'
 
 const route = useRoute()
 const router = useRouter()
 const torneioId = Number(route.params.id)
 
-const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
+const torneio = computed(() => torneios.value.find((t: Torneio) => t.id === torneioId))
 const inscricoesDoTorneio = computed(() =>
-  inscricoes.value.filter((i) => i.torneioId === torneioId),
+  (inscricoes.value as Inscricao[]).filter((i: Inscricao) => i.torneioId === torneioId),
 )
 const chavesForamGeradas = computed(() => !!chaves.value[torneioId])
 
 function gerarChaves() {
-  const duplas = inscricoesDoTorneio.value.map((i) => i.dupla)
+  const duplas: Dupla[] = inscricoesDoTorneio.value.map((i: Inscricao) => i.dupla)
 
   for (let i = duplas.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[duplas[i], duplas[j]] = [duplas[j], duplas[i]]
   }
 
-  const jogos = []
+  const jogos: Jogo[] = []
   for (let i = 0; i < duplas.length; i += 2) {
-    const jogo = {
-      id: i / 2, // ID único para o jogo dentro do torneio
+    const jogo: Jogo = {
+      id: i / 2,
       dupla1: duplas[i],
       dupla2: duplas[i + 1] || null,
-      // 1. Adiciona a estrutura para o resultado
       resultado: {
         dupla1: null,
         dupla2: null,
@@ -78,11 +77,12 @@ function gerarChaves() {
   }
 
   chaves.value[torneioId] = jogos
-  router.push(`/gerenciar-torneios/${torneioId}/resultados`) // Leva direto para gerenciar resultados
+  router.push(`/organizador/gerenciar-torneios/${torneioId}/resultados`)
 }
 </script>
 
 <style scoped>
+/* Estilos permanecem os mesmos */
 .gerenciar-inscricoes-container {
   max-width: 900px;
   margin: 2rem auto;

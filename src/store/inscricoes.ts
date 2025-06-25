@@ -1,6 +1,20 @@
 import { ref, watch } from 'vue'
+import type { Inscricao } from './types' // Importa diretamente de types.ts
 
-const inscricoes = ref(JSON.parse(localStorage.getItem('bt_tourney_inscricoes')) || [])
+function getInscricoesIniciais(): Inscricao[] {
+  const inscricoesGuardadas = localStorage.getItem('bt_tourney_inscricoes')
+  if (inscricoesGuardadas) {
+    try {
+      return JSON.parse(inscricoesGuardadas) as Inscricao[]
+    } catch (_e) {
+      localStorage.removeItem('bt_tourney_inscricoes')
+      return []
+    }
+  }
+  return []
+}
+
+const inscricoes = ref<Inscricao[]>(getInscricoesIniciais())
 
 watch(
   inscricoes,

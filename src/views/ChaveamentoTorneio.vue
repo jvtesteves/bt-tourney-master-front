@@ -33,20 +33,21 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { torneios } from '../store'
+import { torneios, type Torneio } from '../store' // Importa o tipo Torneio
 import { chaves } from '../store/chaves'
+import type { Jogo } from '../store/chaves' // Importa o tipo Jogo
 
 const route = useRoute()
 const torneioId = Number(route.params.id)
 
-const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
+const torneio = computed(() => torneios.value.find((t: Torneio) => t.id === torneioId))
 const jogosDaRodada = computed(() => chaves.value[torneioId] || [])
 
 // Função para determinar o vencedor e aplicar um estilo
-function ehVencedor(jogo, numeroDupla) {
+function ehVencedor(jogo: Jogo, numeroDupla: number): boolean {
   const res1 = jogo.resultado.dupla1
   const res2 = jogo.resultado.dupla2
   if (res1 === null || res2 === null) return false

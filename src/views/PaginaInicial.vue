@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // Nenhum script necessário para esta página estática
 </script>
 

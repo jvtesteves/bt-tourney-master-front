@@ -1,11 +1,13 @@
-<script setup>
-import Cabecalho from './components/Cabecalho.vue';
+<script setup lang="ts">
+import AppCabecalho from './components/AppCabecalho.vue' // <-- Nome do componente e ficheiro atualizado
 </script>
 
 <template>
   <div id="app-wrapper">
-    <Cabecalho />
+    <AppCabecalho />
+    <!-- <-- Tag do componente atualizada -->
     <main>
+      <!-- O Vue Router renderizará o componente da rota atual aqui -->
       <router-view />
     </main>
   </div>
