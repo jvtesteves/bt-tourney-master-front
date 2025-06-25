@@ -1,64 +1,82 @@
-# frontend
+# BT Tourney Master - Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Este é o frontend da aplicação de gestão de torneios de Beach Tennis, construído com **Vue 3**, **Vite** e **TypeScript**.
 
-## Recommended IDE Setup
+## 📋 Visão Geral do Projeto
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+A aplicação fornece uma plataforma completa com áreas distintas para **Organizadores** e **Jogadores**, permitindo:
 
-## Type Support for `.vue` Imports in TS
+- Criação e gestão de torneios
+- Inscrição de jogadores
+- Acompanhamento do progresso dos torneios
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+O estado da aplicação é gerido localmente através de **stores reativas** e persistido no `localStorage`, simulando uma base de dados local.
 
-## Customize configuration
+## 🛠️ Stack de Tecnologias
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Vue 3** – Usando a Composition API e `<script setup>`
+- **Vite** – Build rápido e servidor de desenvolvimento
+- **TypeScript** – Tipagem estática para maior robustez
+- **Vue Router** – Roteamento com proteção de rotas
+- **ESLint** – Garantia de qualidade e consistência do código
 
-## Project Setup
+## 💻 Configuração de Ambiente Recomendada
 
-```sh
-npm install
-```
+- **IDE**: Visual Studio Code (VSCode)
+- **Extensões sugeridas**:
+  - [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) – Substitui o Vetur, recomendado para Vue 3
+  - ESLint – Para linting do código
 
-### Compile and Hot-Reload for Development
+## ⚙️ Instalação e Configuração do Projeto
 
-```sh
+1. **Clone o repositório:**
+   ```bash
+   git clone <URL_DO_SEU_REPOSITORIO>
+   ```
+
+````
+
+2. **Navegue para a pasta do frontend:**
+
+   ```bash
+   cd bt-tourney-master/frontend
+   ```
+
+3. **Instale as dependências:**
+
+   ```bash
+   npm install
+   ```
+
+## 📦 Scripts Disponíveis
+
+### Iniciar o Servidor de Desenvolvimento
+
+Compila a aplicação e inicia com hot-reload:
+
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+### Compilar para Produção
 
-```sh
+Compila e minifica a aplicação. Os arquivos finais estarão na pasta `dist/`:
+
+```bash
 npm run build
 ```
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+### Verificar o Código com ESLint
 
-```sh
-npm run test:unit
-```
+Executa o linting para verificar formatação e possíveis problemas:
 
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-npm run build
-
-# Runs the end-to-end tests
-npm run test:e2e
-# Runs the tests only on Chromium
-npm run test:e2e -- --project=chromium
-# Runs the tests of a specific file
-npm run test:e2e -- tests/example.spec.ts
-# Runs the tests in debug mode
-npm run test:e2e -- --debug
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
+```bash
 npm run lint
 ```
+
+---
+
+Feito com ❤️ para a comunidade de Beach Tennis.
+
+```
+````
