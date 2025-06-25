@@ -30,11 +30,10 @@ O estado da aplicação é gerido localmente através de **stores reativas** e p
 ## ⚙️ Instalação e Configuração do Projeto
 
 1. **Clone o repositório:**
+
    ```bash
    git clone <URL_DO_SEU_REPOSITORIO>
    ```
-
-````
 
 2. **Navegue para a pasta do frontend:**
 
@@ -77,6 +76,3 @@ npm run lint
 ---
 
 Feito com ❤️ para a comunidade de Beach Tennis.
-
-```
-````
