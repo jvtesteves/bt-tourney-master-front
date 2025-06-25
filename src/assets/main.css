@@ -1,0 +1,16 @@
+/* Definição das variáveis de cores */
+:root {
+  --cor-fundo: #FDF8F0;
+  --cor-texto-principal: #4A4A4A;
+  --cor-destaque: #EEDDCC;
+}
+
+/* Estilos globais */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto-principal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
