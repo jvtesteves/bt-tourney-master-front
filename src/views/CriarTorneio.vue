@@ -1,5 +1,11 @@
 <template>
   <div class="criar-torneio-container">
+    <div class="navegacao-voltar">
+      <router-link to="/organizador/gerenciar-torneios" class="voltar-link">
+        &larr; Voltar para Meus Torneios
+      </router-link>
+    </div>
+
     <h2 class="titulo">Criar Novo Torneio</h2>
     <p class="subtitulo">Preencha as informações abaixo para criar seu evento.</p>
 
@@ -18,7 +24,6 @@
         <input type="text" id="local" v-model="form.location" required />
       </div>
 
-      <!-- Layout de datas restaurado -->
       <div class="form-grupo-datas">
         <div class="form-grupo">
           <label for="data-inicio">Data de Início</label>
@@ -49,11 +54,9 @@ const form = ref({
   dataInicio: '',
   dataFim: '',
 })
-
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// Função para formatar a data para o padrão dd/mm/yyyy
 function formatarData(data: string): string {
   if (!data) return ''
   const [ano, mes, dia] = data.split('-')
@@ -65,27 +68,22 @@ async function submeterFormulario() {
   errorMessage.value = ''
 
   try {
-    // Prepara o objeto de dados para enviar para a API
     const dadosParaApi = {
       name: form.value.name,
       location: form.value.location,
-      // Combina as datas numa única string, como o back-end espera
       dates: `${formatarData(form.value.dataInicio)} a ${formatarData(form.value.dataFim)}`,
       categories: 'A ser definida',
       registrationFee: 0,
     }
 
-    const novoTorneio = await callApi('/tournaments', {
+    await callApi('/tournaments', {
       method: 'POST',
       body: dadosParaApi,
     });
 
-    console.log('Torneio criado com sucesso:', novoTorneio);
-
     router.push('/organizador/gerenciar-torneios');
 
   } catch (error: unknown) {
-    console.error("Erro ao submeter o formulário:", error);
     if (error instanceof Error) {
       errorMessage.value = `Falha ao criar o torneio: ${error.message}`;
     } else {
@@ -98,11 +96,19 @@ async function submeterFormulario() {
 </script>
 
 <style scoped>
-/* Seus estilos originais, que correspondem à imagem */
 .criar-torneio-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
+}
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
 }
 .titulo {
   text-align: center;
@@ -153,15 +159,10 @@ async function submeterFormulario() {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
   margin-top: 1rem;
-}
-.btn-criar:hover {
-  background-color: #333;
 }
 .btn-criar:disabled {
   background-color: #ccc;
-  cursor: not-allowed;
 }
 .error-message {
   background-color: #f8d7da;

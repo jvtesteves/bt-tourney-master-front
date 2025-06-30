@@ -1,5 +1,20 @@
 <template>
   <div class="chaveamento-container">
+    <div class="navegacao-voltar">
+      <!-- Link para o Organizador -->
+      <router-link v-if="auth.tipoDeUtilizador.value === 'organizador'" to="/organizador/gerenciar-torneios" class="voltar-link">
+        &larr; Voltar para Meus Torneios
+      </router-link>
+      <!-- Link para o Jogador -->
+      <router-link v-else-if="auth.tipoDeUtilizador.value === 'jogador'" to="/jogador/dashboard" class="voltar-link">
+        &larr; Voltar para Meu Painel
+      </router-link>
+      <!-- Link para o visitante público -->
+      <router-link v-else to="/torneios" class="voltar-link">
+        &larr; Voltar para a Lista de Torneios
+      </router-link>
+    </div>
+
     <!-- Mensagem de carregamento -->
     <div v-if="isLoading" class="feedback-container">
       <p>A carregar chaveamento...</p>
@@ -8,7 +23,6 @@
     <!-- Mensagem de erro -->
     <div v-else-if="errorMessage" class="feedback-container error">
       <p>{{ errorMessage }}</p>
-      <router-link to="/torneios" class="voltar-link">Voltar para a lista de torneios</router-link>
     </div>
 
     <!-- Conteúdo principal -->
@@ -35,6 +49,14 @@
           </div>
         </div>
       </div>
+
+      <!-- Ações para o Organizador -->
+       <div v-if="auth.tipoDeUtilizador.value === 'organizador'" class="acoes-rodape">
+          <router-link :to="`/organizador/gerenciar-torneios/${tournamentId}/resultados`" class="btn-acao">
+            Gerir Resultados
+          </router-link>
+        </div>
+
     </div>
   </div>
 </template>
@@ -43,12 +65,10 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { callPublicApi } from '../services/api'
+import { useAuth } from '../store/auth'
 
 // Define as interfaces para os dados que vêm da API
-interface Team {
-  id: string;
-  team: string[];
-}
+interface Team { id: string; team: string[] }
 interface Match {
   id: string;
   round: number;
@@ -57,24 +77,18 @@ interface Match {
   winner: 'team1' | 'team2' | null;
   result: { team1: number | null, team2: number | null } | null;
 }
-interface Draw {
-  tournamentId: string;
-  matches: Match[];
-}
-interface Tournament {
-  name: string;
-}
+interface Draw { tournamentId: string; matches: Match[] }
+interface Tournament { name: string }
 
 const route = useRoute()
+const auth = useAuth()
 const tournamentId = route.params.id as string
 
-// Variáveis reativas para o estado da página
 const torneio = ref<Tournament | null>(null)
 const draw = ref<Draw | null>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
 
-// onMounted é executado assim que o componente é carregado
 onMounted(async () => {
   if (!tournamentId) {
     errorMessage.value = "ID do torneio não encontrado no URL."
@@ -83,7 +97,6 @@ onMounted(async () => {
   }
 
   try {
-    // Busca os dados em paralelo para mais eficiência
     const [tournamentData, drawData] = await Promise.all([
       callPublicApi(`/public/tournaments/${tournamentId}`),
       callPublicApi(`/public/tournaments/${tournamentId}/draw`)
@@ -109,6 +122,15 @@ onMounted(async () => {
   max-width: 1000px;
   margin: 2rem auto;
   padding: 2rem;
+}
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
 }
 .titulo {
   text-align: center;
@@ -161,7 +183,7 @@ onMounted(async () => {
   font-style: italic;
   color: #999;
 }
-.feedback-container, .sem-chaves, .torneio-nao-encontrado {
+.feedback-container {
   text-align: center;
   padding: 2rem;
   background-color: #f9f9f9;
@@ -179,10 +201,22 @@ onMounted(async () => {
   font-weight: bold;
   color: #2a9d8f;
 }
-.voltar-link {
-    margin-top: 1rem;
-    display: inline-block;
-    text-decoration: none;
-    font-weight: bold;
+.acoes-rodape {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.btn-acao {
+  background-color: var(--cor-texto-principal);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
 }
 </style>

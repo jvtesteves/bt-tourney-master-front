@@ -3,6 +3,7 @@ import { signOut } from 'aws-amplify/auth'
 
 interface DadosCognitoUtilizador {
   username: string;
+  name?: string;
 }
 type TipoUtilizador = 'organizador' | 'jogador'
 interface Utilizador {

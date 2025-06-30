@@ -1,7 +1,11 @@
 <template>
   <div class="dashboard-container">
     <h2 class="titulo">Meu Painel</h2>
-    <p v-if="auth.dadosDoUtilizador.value" class="subtitulo">
+    <p v-if="auth.dadosDoUtilizador.value?.name" class="subtitulo">
+      Bem-vindo, {{ auth.dadosDoUtilizador.value.name }}!
+    </p>
+    <!-- Fallback para o email se o nome não estiver disponível -->
+    <p v-else-if="auth.dadosDoUtilizador.value?.username" class="subtitulo">
       Bem-vindo, {{ auth.dadosDoUtilizador.value.username }}!
     </p>
 
@@ -66,11 +70,10 @@ const errorMessage = ref('')
 // onMounted é executado assim que o componente é carregado
 onMounted(async () => {
   try {
-    // Chama o endpoint protegido
+    // Chama o nosso novo endpoint protegido
     const data = await callApi('/my-inscriptions')
     myInscriptions.value = data
   } catch (error: unknown) {
-    console.error("Falha ao obter as inscrições do jogador:", error)
     if (error instanceof Error) {
       errorMessage.value = `Não foi possível carregar os seus torneios. ${error.message}`
     } else {

@@ -1,5 +1,11 @@
 <template>
   <div class="inscricao-container">
+    <div class="navegacao-voltar">
+       <router-link :to="`/torneio/${tournamentId}`" class="voltar-link">
+        &larr; Voltar para os Detalhes do Torneio
+      </router-link>
+    </div>
+
     <!-- Mensagem de carregamento -->
     <div v-if="isLoading" class="feedback-container">
       <p>A carregar informações do torneio...</p>
@@ -32,10 +38,6 @@
         </button>
       </form>
     </div>
-
-     <div v-else class="feedback-container">
-      <h2>Torneio não encontrado</h2>
-    </div>
   </div>
 </template>
 
@@ -44,7 +46,6 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { callPublicApi, callApi } from '../services/api'
 
-// Define a interface para os dados do torneio
 interface Tournament {
   id: string;
   name: string;
@@ -53,26 +54,21 @@ interface Tournament {
 const route = useRoute()
 const router = useRouter()
 const tournamentId = route.params.id as string
-
-// Estado para o carregamento da página e dos dados do torneio
 const torneio = ref<Tournament | null>(null)
 const isLoading = ref(true)
 const errorMessage = ref('')
 
-// Estado para o formulário e o processo de submissão
 const form = ref({
   category: '',
   partnerName: '',
 })
 const isSubmitting = ref(false)
 
-// 1. Carrega os detalhes do torneio assim que a página é montada
 onMounted(async () => {
   try {
     const data = await callPublicApi(`/public/tournaments/${tournamentId}`)
     torneio.value = data
   } catch (error: unknown) {
-    // Verifica se o erro é uma instância de Error
     if (error instanceof Error) {
       errorMessage.value = `Não foi possível carregar os dados do torneio: ${error.message}`
     } else {
@@ -83,7 +79,6 @@ onMounted(async () => {
   }
 })
 
-// 2. Função para submeter a inscrição
 async function submeterInscricao() {
   if (!torneio.value) return;
 
@@ -91,23 +86,17 @@ async function submeterInscricao() {
   errorMessage.value = ''
 
   try {
-    // Prepara os dados para enviar para o back-end
     const inscriptionData = {
       tournamentId: torneio.value.id,
       tournamentName: torneio.value.name,
       category: form.value.category,
       partnerName: form.value.partnerName,
     }
-
-    // Chama a nossa API protegida para criar a inscrição
     await callApi('/inscriptions', {
       method: 'POST',
       body: inscriptionData,
     })
-
-    // Redireciona para uma página de confirmação
     router.push('/inscricao-confirmada')
-
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = `Erro ao realizar inscrição: ${error.message}`
@@ -126,12 +115,20 @@ async function submeterInscricao() {
   margin: 2rem auto;
   padding: 2rem;
 }
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
+}
 .feedback-container {
   text-align: center;
   padding: 3rem;
-  background-color: white;
+  background-color: #f9f9f9;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 .feedback-container.error {
     background-color: #f8d7da;
@@ -188,7 +185,6 @@ async function submeterInscricao() {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 .btn-confirmar:disabled {
     background-color: #ccc;
