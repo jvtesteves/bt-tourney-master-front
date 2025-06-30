@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuth } from '../store/auth'
-
-// Importe todas as suas páginas
 import PaginaInicial from '../views/PaginaInicial.vue'
 import LoginOrganizador from '../views/LoginOrganizador.vue'
 import LoginJogador from '../views/LoginJogador.vue'
@@ -20,10 +18,22 @@ import ChaveamentoTorneio from '../views/ChaveamentoTorneio.vue'
 const routes = [
   // Rotas Públicas e de Login
   { path: '/', name: 'PaginaInicial', component: PaginaInicial },
-  { path: '/login/organizador', name: 'LoginOrganizador', component: LoginOrganizador },
-  { path: '/login/jogador', name: 'LoginJogador', component: LoginJogador },
+  {
+    path: '/login/organizador',
+    name: 'LoginOrganizador',
+    component: LoginOrganizador,
+    // Rota para ser acedida apenas por utilizadores não logados
+    meta: { requiresGuest: true },
+  },
+  {
+    path: '/login/jogador',
+    name: 'LoginJogador',
+    component: LoginJogador,
+    // Rota para ser acedida apenas por utilizadores não logados
+    meta: { requiresGuest: true },
+  },
 
-  // Rotas Protegidas do Organizador...
+  // Rotas Protegidas do Organizador
   {
     path: '/organizador/dashboard',
     name: 'DashboardOrganizador',
@@ -63,7 +73,7 @@ const routes = [
     meta: { requiresAuth: true, tipo: 'jogador' },
   },
 
-  // Rotas Públicas...
+  // Rotas Públicas
   { path: '/torneios', name: 'ListaPublicaTorneios', component: ListaPublicaTorneios },
   { path: '/torneio/:id', name: 'DetalhesTorneio', component: DetalhesTorneio },
   { path: '/torneio/:id/inscrever', name: 'InscricaoTorneio', component: InscricaoTorneio },
@@ -79,15 +89,28 @@ const router = createRouter({
 // Guarda de Navegação (Navigation Guard)
 router.beforeEach((to, from, next) => {
   const { estaLogado, tipoDeUtilizador } = useAuth()
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
-  const tipoRequerido = to.meta.tipo
 
-  if (requiresAuth && !estaLogado.value) {
-    const redirectTo = tipoRequerido === 'organizador' ? '/login/organizador' : '/login/jogador'
+  const requiresAuth = to.meta.requiresAuth
+  const tipoRequerido = to.meta.tipo as string | undefined
+  const requiresGuest = to.meta.requiresGuest
+
+  // 1. Se a rota é para convidados (página de login) e o utilizador JÁ está logado
+  if (requiresGuest && estaLogado.value) {
+    const redirectTo = tipoDeUtilizador.value === 'organizador' ? { name: 'DashboardOrganizador' } : { name: 'DashboardJogador' }
     next(redirectTo)
-  } else if (requiresAuth && tipoDeUtilizador.value !== tipoRequerido) {
-    next('/')
-  } else {
+  }
+  // 2. Se a rota requer autenticação e o utilizador NÃO está logado
+  else if (requiresAuth && !estaLogado.value) {
+    const redirectTo = tipoRequerido === 'organizador' ? { name: 'LoginOrganizador' } : { name: 'LoginJogador' }
+    next(redirectTo)
+  }
+  // 3. Se a rota requer um 'tipo' de utilizador e o 'tipo' do utilizador logado é diferente
+  else if (requiresAuth && tipoDeUtilizador.value !== tipoRequerido) {
+    // Redireciona para a página inicial para evitar acesso indevido
+    next({ name: 'PaginaInicial' })
+  }
+  // 4. Se nenhuma das condições acima for atendida, permite a navegação
+  else {
     next()
   }
 })

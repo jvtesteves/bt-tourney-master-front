@@ -1,88 +1,157 @@
 <template>
   <div class="gerenciar-inscricoes-container">
-    <div v-if="torneio">
-      <router-link to="/organizador/gerenciar-torneios" class="voltar-link"
-        >&larr; Voltar para Meus Torneios</router-link
-      >
+    <router-link to="/organizador/gerenciar-torneios" class="voltar-link">
+      &larr; Voltar para Meus Torneios
+    </router-link>
+
+    <!-- Mensagem de carregamento -->
+    <div v-if="isLoading" class="feedback-container">
+      <p>A carregar inscrições...</p>
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div v-else-if="errorMessage" class="feedback-container error">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div v-else-if="torneio">
       <div class="header">
-        <h2 class="titulo">Inscrições para: {{ torneio.nome }}</h2>
+        <h2 class="titulo">Inscrições para: {{ torneio.name }}</h2>
         <button
-          v-if="!chavesForamGeradas && inscricoesDoTorneio.length > 1"
-          @click="gerarChaves"
+          @click="generateDraw"
+          :disabled="isGeneratingDraw || inscriptions.length < 2"
           class="btn-gerar-chaves"
         >
-          Gerar Chaves
+          {{ isGeneratingDraw ? 'A Gerar...' : 'Gerar Chaves' }}
         </button>
-        <router-link
-          v-if="chavesForamGeradas"
-          :to="`/torneio/${torneioId}/chaves`"
-          class="btn-ver-chaves"
-        >
-          Ver Chaves
-        </router-link>
       </div>
-      <div v-if="inscricoesDoTorneio.length > 0" class="lista-inscricoes">
-        <div v-for="inscricao in inscricoesDoTorneio" :key="inscricao.id" class="inscricao-card">
-          <p><strong>Dupla:</strong> {{ inscricao.dupla.join(' e ') }}</p>
+
+      <div v-if="inscriptions.length > 0" class="lista-inscricoes">
+        <div v-for="inscricao in inscriptions" :key="inscricao.id" class="inscricao-card">
+          <div class="info-inscricao">
+            <p><strong>Dupla:</strong> {{ inscricao.team.join(' e ') }}</p>
+            <p class="categoria"><strong>Categoria:</strong> {{ inscricao.category }}</p>
+          </div>
+          <div class="status-e-acoes">
+            <span :class="['status-badge', `status-${inscricao.status.toLowerCase()}`]">
+              {{ inscricao.status }}
+            </span>
+            <div v-if="inscricao.status === 'Pendente'" class="botoes-acao">
+              <button @click="updateStatus(inscricao.id, 'Aprovada')" class="btn-aprovar">Aprovar</button>
+              <button @click="updateStatus(inscricao.id, 'Rejeitada')" class="btn-rejeitar">Rejeitar</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div v-else class="sem-inscricoes">
+
+      <div v-else class="feedback-container">
         <p>Ainda não há nenhuma inscrição para este torneio.</p>
       </div>
-    </div>
-    <div v-else class="torneio-nao-encontrado">
-      <h2>Torneio não encontrado.</h2>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { torneios } from '../store'
-import { inscricoes } from '../store/inscricoes'
-import { chaves } from '../store/chaves'
-import type { Torneio, Inscricao, Dupla, Jogo } from '../store/types'
+import { callApi, callPublicApi } from '../services/api'
+
+// Interfaces
+interface Tournament {
+  id: string;
+  name: string;
+}
+interface Inscription {
+  id: string;
+  team: string[];
+  category: string;
+  status: 'Pendente' | 'Aprovada' | 'Rejeitada';
+}
 
 const route = useRoute()
 const router = useRouter()
-const torneioId = Number(route.params.id)
+const tournamentId = route.params.id as string
 
-const torneio = computed(() => torneios.value.find((t: Torneio) => t.id === torneioId))
-const inscricoesDoTorneio = computed(() =>
-  (inscricoes.value as Inscricao[]).filter((i: Inscricao) => i.torneioId === torneioId),
-)
-const chavesForamGeradas = computed(() => !!chaves.value[torneioId])
+// Estado da página
+const torneio = ref<Tournament | null>(null)
+const inscriptions = ref<Inscription[]>([])
+const isLoading = ref(true)
+const errorMessage = ref('')
+const isGeneratingDraw = ref(false)
 
-function gerarChaves() {
-  const duplas: Dupla[] = inscricoesDoTorneio.value.map((i: Inscricao) => i.dupla)
+// Busca os dados iniciais
+onMounted(async () => {
+  isLoading.value = true
+  errorMessage.value = ''
+  try {
+    const tournamentData = await callPublicApi(`/public/tournaments/${tournamentId}`)
+    torneio.value = tournamentData
 
-  for (let i = duplas.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[duplas[i], duplas[j]] = [duplas[j], duplas[i]]
-  }
-
-  const jogos: Jogo[] = []
-  for (let i = 0; i < duplas.length; i += 2) {
-    const jogo: Jogo = {
-      id: i / 2,
-      dupla1: duplas[i],
-      dupla2: duplas[i + 1] || null,
-      resultado: {
-        dupla1: null,
-        dupla2: null,
-      },
+    const inscriptionsData = await callApi(`/tournaments/${tournamentId}/inscriptions`)
+    inscriptions.value = inscriptionsData
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage.value = `Não foi possível carregar os dados. ${error.message}`
+    } else {
+      errorMessage.value = 'Ocorreu um erro desconhecido.'
     }
-    jogos.push(jogo)
+  } finally {
+    isLoading.value = false
   }
+})
 
-  chaves.value[torneioId] = jogos
-  router.push(`/organizador/gerenciar-torneios/${torneioId}/resultados`)
+// Atualiza o estado de uma inscrição
+async function updateStatus(inscriptionId: string, newStatus: 'Aprovada' | 'Rejeitada') {
+  try {
+    const updatedInscription = await callApi(`/inscriptions/${inscriptionId}`, {
+      method: 'PATCH',
+      body: { status: newStatus },
+    })
+    const index = inscriptions.value.findIndex(i => i.id === inscriptionId)
+    if (index !== -1) {
+      inscriptions.value[index] = updatedInscription
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      alert(`Erro ao atualizar a inscrição: ${error.message}`)
+    } else {
+      alert('Ocorreu um erro desconhecido.')
+    }
+  }
+}
+
+// Gera as chaves do torneio
+async function generateDraw() {
+  isGeneratingDraw.value = true
+  errorMessage.value = ''
+
+  try {
+    // Chama o endpoint para gerar as chaves
+    await callApi(`/tournaments/${tournamentId}/draw`, {
+      method: 'POST',
+    });
+
+    alert('Chaves geradas com sucesso!');
+    // Redireciona o organizador para a página de visualização de chaves
+    router.push(`/torneio/${tournamentId}/chaves`);
+
+  } catch (error: unknown) {
+    console.error("Erro ao gerar as chaves:", error);
+    if (error instanceof Error) {
+      alert(`Erro ao gerar as chaves: ${error.message}`);
+      errorMessage.value = `Erro ao gerar as chaves: ${error.message}`;
+    } else {
+      alert('Ocorreu um erro desconhecido.');
+      errorMessage.value = 'Ocorreu um erro desconhecido.';
+    }
+  } finally {
+    isGeneratingDraw.value = false
+  }
 }
 </script>
 
 <style scoped>
-/* Estilos permanecem os mesmos */
 .gerenciar-inscricoes-container {
   max-width: 900px;
   margin: 2rem auto;
@@ -96,6 +165,7 @@ function gerarChaves() {
 }
 .titulo {
   margin: 0;
+  font-size: 2rem;
 }
 .voltar-link {
   text-decoration: none;
@@ -111,30 +181,89 @@ function gerarChaves() {
 }
 .inscricao-card {
   background-color: white;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.inscricao-card p {
+.info-inscricao p {
   margin: 0;
   font-size: 1.1rem;
 }
-.sem-inscricoes,
-.torneio-nao-encontrado {
+.info-inscricao .categoria {
+    font-size: 1rem;
+    font-style: italic;
+    color: #555;
+}
+.status-e-acoes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.status-pendente {
+  background-color: #fef08a;
+  color: #a16207;
+}
+.status-aprovada {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.status-rejeitada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.botoes-acao {
+  display: flex;
+  gap: 0.5rem;
+}
+.btn-aprovar, .btn-rejeitar {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-aprovar {
+  background-color: #22c55e;
+  color: white;
+}
+.btn-rejeitar {
+  background-color: #ef4444;
+  color: white;
+}
+.btn-aprovar:hover, .btn-rejeitar:hover {
+  opacity: 0.8;
+}
+.feedback-container {
   background-color: white;
   padding: 2rem;
   text-align: center;
   border-radius: 8px;
 }
-.btn-gerar-chaves,
-.btn-ver-chaves {
+.feedback-container.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.btn-gerar-chaves {
   background-color: var(--cor-texto-principal);
   color: white;
   padding: 0.8rem 1.5rem;
   border-radius: 4px;
-  text-decoration: none;
   font-weight: bold;
   border: none;
   cursor: pointer;
+}
+.btn-gerar-chaves:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 </style>

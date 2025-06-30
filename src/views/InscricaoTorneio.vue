@@ -1,77 +1,166 @@
 <template>
   <div class="inscricao-container">
-    <div v-if="torneio">
-      <h2 class="titulo">Inscrição para: {{ torneio.nome }}</h2>
-      <p class="subtitulo">Preencha os dados da dupla para confirmar a participação.</p>
-      <form @submit.prevent="realizarInscricao" class="form-inscricao">
-        <!-- ... o seu template do formulário permanece o mesmo ... -->
+    <!-- Mensagem de carregamento -->
+    <div v-if="isLoading" class="feedback-container">
+      <p>A carregar informações do torneio...</p>
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div v-else-if="errorMessage" class="feedback-container error">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Formulário de Inscrição -->
+    <div v-else-if="torneio" class="conteudo-inscricao">
+      <h2 class="titulo">Inscrição no Torneio</h2>
+      <h3 class="nome-torneio">{{ torneio.name }}</h3>
+      <p class="subtitulo">Preencha os dados da sua dupla para se inscrever.</p>
+
+      <form @submit.prevent="submeterInscricao" class="form-inscricao">
         <div class="form-grupo">
-          <label for="jogador1">Nome do Jogador 1</label>
-          <input type="text" id="jogador1" v-model="form.jogador1" required />
+          <label for="categoria">Categoria</label>
+          <input type="text" id="categoria" v-model="form.category" placeholder="Ex: Masculina B" required />
         </div>
+
         <div class="form-grupo">
-          <label for="jogador2">Nome do Jogador 2</label>
-          <input type="text" id="jogador2" v-model="form.jogador2" required />
+          <label for="parceiro">Nome do Parceiro(a)</label>
+          <input type="text" id="parceiro" v-model="form.partnerName" required />
         </div>
-        <button type="submit" class="btn-confirmar">Confirmar Inscrição</button>
+
+        <button type="submit" class="btn-confirmar" :disabled="isSubmitting">
+          {{ isSubmitting ? 'A Inscrever...' : 'Confirmar Inscrição' }}
+        </button>
       </form>
     </div>
-    <div v-else class="torneio-nao-encontrado">
+
+     <div v-else class="feedback-container">
       <h2>Torneio não encontrado</h2>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { torneios } from '../store'
-import { inscricoes } from '../store/inscricoes'
-import type { Inscricao } from '../store/types' // Importa o tipo central
+import { callPublicApi, callApi } from '../services/api'
+
+// Define a interface para os dados do torneio
+interface Tournament {
+  id: string;
+  name: string;
+}
 
 const route = useRoute()
 const router = useRouter()
-const torneioId = Number(route.params.id)
+const tournamentId = route.params.id as string
 
-const torneio = computed(() => torneios.value.find((t) => t.id === torneioId))
+// Estado para o carregamento da página e dos dados do torneio
+const torneio = ref<Tournament | null>(null)
+const isLoading = ref(true)
+const errorMessage = ref('')
 
-const form = ref({ jogador1: '', jogador2: '' })
+// Estado para o formulário e o processo de submissão
+const form = ref({
+  category: '',
+  partnerName: '',
+})
+const isSubmitting = ref(false)
 
-function realizarInscricao() {
-  if (!torneio.value) return // Guarda de segurança
-
-  const novaInscricao: Inscricao = {
-    id: Date.now(),
-    torneioId: torneioId,
-    nomeTorneio: torneio.value.nome,
-    dupla: [form.value.jogador1, form.value.jogador2],
+// 1. Carrega os detalhes do torneio assim que a página é montada
+onMounted(async () => {
+  try {
+    const data = await callPublicApi(`/public/tournaments/${tournamentId}`)
+    torneio.value = data
+  } catch (error: unknown) {
+    // Verifica se o erro é uma instância de Error
+    if (error instanceof Error) {
+      errorMessage.value = `Não foi possível carregar os dados do torneio: ${error.message}`
+    } else {
+      errorMessage.value = 'Ocorreu um erro desconhecido.'
+    }
+  } finally {
+    isLoading.value = false
   }
+})
 
-  inscricoes.value.push(novaInscricao)
-  router.push('/inscricao-confirmada')
+// 2. Função para submeter a inscrição
+async function submeterInscricao() {
+  if (!torneio.value) return;
+
+  isSubmitting.value = true
+  errorMessage.value = ''
+
+  try {
+    // Prepara os dados para enviar para o back-end
+    const inscriptionData = {
+      tournamentId: torneio.value.id,
+      tournamentName: torneio.value.name,
+      category: form.value.category,
+      partnerName: form.value.partnerName,
+    }
+
+    // Chama a nossa API protegida para criar a inscrição
+    await callApi('/inscriptions', {
+      method: 'POST',
+      body: inscriptionData,
+    })
+
+    // Redireciona para uma página de confirmação
+    router.push('/inscricao-confirmada')
+
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage.value = `Erro ao realizar inscrição: ${error.message}`
+    } else {
+      errorMessage.value = 'Ocorreu um erro desconhecido.'
+    }
+  } finally {
+    isSubmitting.value = false
+  }
 }
 </script>
 
 <style scoped>
-/* Estilos permanecem os mesmos */
 .inscricao-container {
   max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
 }
+.feedback-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.feedback-container.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+.conteudo-inscricao {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
 .titulo {
   font-size: 2.2rem;
+  text-align: center;
+}
+.nome-torneio {
+    font-size: 1.5rem;
+    text-align: center;
+    color: var(--cor-texto-principal);
+    margin-top: 0.5rem;
 }
 .subtitulo {
+  text-align: center;
   font-size: 1.1rem;
   opacity: 0.8;
   margin-bottom: 2rem;
 }
 .form-inscricao {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding-top: 1rem;
 }
 .form-grupo {
   margin-bottom: 1.5rem;
@@ -90,6 +179,7 @@ function realizarInscricao() {
   box-sizing: border-box;
 }
 .btn-confirmar {
+  width: 100%;
   background-color: var(--cor-texto-principal);
   color: white;
   padding: 0.8rem 1.5rem;
@@ -98,5 +188,10 @@ function realizarInscricao() {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-confirmar:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 </style>

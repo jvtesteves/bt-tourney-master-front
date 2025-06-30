@@ -1,21 +1,21 @@
 import { ref, watch, computed } from 'vue'
+import { signOut } from 'aws-amplify/auth'
 
-// 1. Definir os tipos para o nosso utilizador
-// Isto garante que 'tipo' só pode ser 'organizador' ou 'jogador'.
+interface DadosCognitoUtilizador {
+  username: string;
+}
 type TipoUtilizador = 'organizador' | 'jogador'
 interface Utilizador {
   tipo: TipoUtilizador
+  dados: DadosCognitoUtilizador
 }
 
-// 2. Função segura para obter o utilizador inicial do localStorage
 function getUtilizadorInicial(): Utilizador | null {
   const utilizadorGuardado = localStorage.getItem('bt_tourney_utilizador')
   if (utilizadorGuardado) {
     try {
       return JSON.parse(utilizadorGuardado) as Utilizador
     } catch (_e) {
-      // Corrigido: 'e' renomeado para '_e' para indicar que não é utilizado
-      // Se houver um erro ao processar o JSON, remove o item inválido
       localStorage.removeItem('bt_tourney_utilizador')
       return null
     }
@@ -23,32 +23,52 @@ function getUtilizadorInicial(): Utilizador | null {
   return null
 }
 
-// 3. Tipificar a nossa 'ref' para aceitar um 'Utilizador' ou 'null'
 const utilizadorLogado = ref<Utilizador | null>(getUtilizadorInicial())
 
-// Salva o estado do utilizador no localStorage sempre que ele mudar
 watch(
   utilizadorLogado,
   (novoValor) => {
-    localStorage.setItem('bt_tourney_utilizador', JSON.stringify(novoValor))
+    if (novoValor) {
+      localStorage.setItem('bt_tourney_utilizador', JSON.stringify(novoValor))
+    } else {
+      localStorage.removeItem('bt_tourney_utilizador')
+    }
   },
   { deep: true },
 )
 
-// Funções para gerir a autenticação
-// 4. Tipificar o parâmetro da função 'login'
-function login(tipo: TipoUtilizador) {
-  utilizadorLogado.value = { tipo: tipo }
+function login(tipo: TipoUtilizador, dadosUtilizador: DadosCognitoUtilizador) {
+  utilizadorLogado.value = {
+    tipo: tipo,
+    dados: dadosUtilizador
+  }
 }
 
-function logout() {
-  utilizadorLogado.value = null
+// Função logout 'async' e chama o signOut da Amplify
+async function logout() {
+  try {
+    // Termina a sessão no Cognito, invalidando os tokens.
+    await signOut();
+    // Limpa o estado local, fazendo a UI reagir.
+    utilizadorLogado.value = null;
+  } catch (error) {
+    console.error("Erro ao fazer logout:", error);
+    // Mesmo que haja um erro na AWS, força a limpeza local
+    utilizadorLogado.value = null;
+  }
 }
 
-// Propriedades computadas para facilitar a verificação nos componentes
 const estaLogado = computed(() => !!utilizadorLogado.value)
 const tipoDeUtilizador = computed(() => utilizadorLogado.value?.tipo)
+const dadosDoUtilizador = computed(() => utilizadorLogado.value?.dados)
 
 export function useAuth() {
-  return { utilizadorLogado, login, logout, estaLogado, tipoDeUtilizador }
+  return {
+    utilizadorLogado,
+    login,
+    logout,
+    estaLogado,
+    tipoDeUtilizador,
+    dadosDoUtilizador
+  }
 }

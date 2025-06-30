@@ -3,23 +3,32 @@
     <h2 class="titulo">Torneios Abertos</h2>
     <p class="subtitulo">Encontre o próximo desafio e faça sua inscrição!</p>
 
-    <div v-if="torneios.length === 0" class="sem-torneios">
+    <!-- Mensagem de carregamento -->
+    <div v-if="isLoading" class="sem-torneios">
+      <p>A procurar torneios...</p>
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div v-else-if="errorMessage" class="sem-torneios error">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Mensagem para quando não há torneios -->
+    <div v-else-if="tournaments.length === 0" class="sem-torneios">
       <p>Nenhum torneio disponível no momento. Volte em breve!</p>
     </div>
 
     <div v-else class="lista-torneios">
       <div
-        v-for="torneio in torneios"
+        v-for="torneio in tournaments"
         :key="torneio.id"
         class="torneio-card"
         @click="verDetalhes(torneio.id)"
       >
-        <h3>{{ torneio.nome }}</h3>
-        <p><strong>Local:</strong> {{ torneio.local }}</p>
-        <p>
-          <strong>Data:</strong> {{ formatarData(torneio.dataInicio) }} a
-          {{ formatarData(torneio.dataFim) }}
-        </p>
+        <!-- Usamos os dados da API: name, location, dates -->
+        <h3>{{ torneio.name }}</h3>
+        <p><strong>Local:</strong> {{ torneio.location }}</p>
+        <p><strong>Data:</strong> {{ torneio.dates }}</p>
         <span class="ver-mais">Ver mais detalhes</span>
       </div>
     </div>
@@ -27,21 +36,43 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { torneios } from '../store'
+import { callPublicApi } from '../services/api'
+
+// Define o tipo para um objeto de torneio que vem da API
+interface Tournament {
+  id: string;
+  name: string;
+  location: string;
+  dates: string;
+}
 
 const router = useRouter()
+const tournaments = ref<Tournament[]>([])
+const isLoading = ref(true)
+const errorMessage = ref('')
 
-function verDetalhes(id: number) {
+function verDetalhes(id: string) {
   router.push(`/torneio/${id}`)
 }
 
-// Função para formatar a data para um padrão mais legível
-function formatarData(data: string): string {
-  if (!data) return ''
-  const [ano, mes, dia] = data.split('-')
-  return `${dia}/${mes}/${ano}`
-}
+// onMounted é executado assim que o componente é montado
+onMounted(async () => {
+  try {
+    // Chama o endpoint público
+    const data = await callPublicApi('/public/tournaments')
+    tournaments.value = data
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      errorMessage.value = `Não foi possível carregar os torneios: ${error.message}`
+    } else {
+      errorMessage.value = 'Ocorreu um erro desconhecido.'
+    }
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <style scoped>
@@ -66,6 +97,10 @@ function formatarData(data: string): string {
   padding: 3rem;
   background-color: #fff;
   border-radius: 8px;
+}
+.sem-torneios.error {
+  background-color: #f8d7da;
+  color: #721c24;
 }
 .lista-torneios {
   display: grid;

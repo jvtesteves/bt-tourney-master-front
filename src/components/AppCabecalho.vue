@@ -12,12 +12,16 @@
 
         <!-- Links do Jogador -->
         <router-link v-if="tipoDeUtilizador === 'jogador'" to="/jogador/dashboard">
-          Meu Perfil
+          Meu Painel
         </router-link>
 
-        <!-- Links de Login/Logout -->
-        <router-link v-if="!estaLogado" to="/login/jogador">Login Jogador</router-link>
-        <router-link v-if="!estaLogado" to="/login/organizador">Login Org.</router-link>
+        <!-- Links de Login -->
+        <template v-if="!estaLogado">
+          <router-link to="/login/jogador">Login Jogador</router-link>
+          <router-link to="/login/organizador">Login Org.</router-link>
+        </template>
+
+        <!-- Botão de Logout -->
         <a v-if="estaLogado" @click="fazerLogout" class="logout-link"> Sair </a>
       </nav>
     </div>
@@ -31,14 +35,14 @@ import { useAuth } from '../store/auth'
 const { estaLogado, tipoDeUtilizador, logout } = useAuth()
 const router = useRouter()
 
-function fazerLogout() {
-  logout()
+// Função async para aguardar a finalização do logout da AWS
+async function fazerLogout() {
+  await logout()
   router.push('/')
 }
 </script>
 
 <style scoped>
-/* Os seus estilos existentes permanecem os mesmos. Apenas certifique-se de que estão aqui. */
 .cabecalho {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

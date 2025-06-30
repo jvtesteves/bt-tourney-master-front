@@ -2,27 +2,43 @@
   <div class="gerenciar-container">
     <div class="header">
       <h2 class="titulo">Seus Torneios</h2>
-      <router-link to="/organizador/criar-torneio" class="btn-novo-torneio"
-        >Criar Novo Torneio</router-link
-      >
+      <router-link to="/organizador/criar-torneio" class="btn-novo-torneio">
+        Criar Novo Torneio
+      </router-link>
     </div>
 
-    <div v-if="torneios.length === 0" class="sem-torneios">
+    <!-- Mensagem de carregamento -->
+    <div v-if="isLoading" class="sem-torneios">
+      <p>A carregar torneios...</p>
+    </div>
+
+    <!-- Mensagem de erro -->
+    <div v-else-if="errorMessage" class="sem-torneios error">
+      <p>{{ errorMessage }}</p>
+    </div>
+
+    <!-- Mensagem para quando não há torneios -->
+    <div v-else-if="tournaments.length === 0" class="sem-torneios">
       <p>Você ainda não criou nenhum torneio.</p>
     </div>
 
+    <!-- Lista de torneios obtida da API -->
     <div v-else class="lista-torneios">
-      <div v-for="torneio in torneios" :key="torneio.id" class="torneio-card">
+      <div v-for="torneio in tournaments" :key="torneio.id" class="torneio-card">
         <div class="card-content">
-          <h3>{{ torneio.nome }}</h3>
-          <p><strong>Local:</strong> {{ torneio.local }}</p>
-          <p><strong>Data:</strong> {{ torneio.dataInicio }} a {{ torneio.dataFim }}</p>
-          <p class="contador-inscricoes">{{ contarInscricoes(torneio.id) }} inscrições</p>
+          <!-- Usamos as propriedades retornadas pela API: name, location, dates -->
+          <h3>{{ torneio.name }}</h3>
+          <p><strong>Local:</strong> {{ torneio.location }}</p>
+          <p><strong>Data:</strong> {{ torneio.dates }}</p>
         </div>
         <div class="card-actions">
-          <button @click="verInscricoes(torneio.id)" class="btn-ver-inscricoes">
+           <!-- Links para as outras páginas de gestão -->
+          <router-link :to="`/organizador/gerenciar-torneios/${torneio.id}/inscricoes`" class="btn-acao">
             Ver Inscrições
-          </button>
+          </router-link>
+          <router-link :to="`/organizador/gerenciar-torneios/${torneio.id}/resultados`" class="btn-acao">
+            Resultados
+          </router-link>
         </div>
       </div>
     </div>
@@ -30,23 +46,39 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import { torneios } from '../store'
-import { inscricoes } from '../store/inscricoes'
-import type { Inscricao } from '../store/types' // <-- CORREÇÃO: Importa de 'types.ts'
+import { ref, onMounted } from 'vue'
+import { callApi } from '../services/api'
 
-const router = useRouter()
-
-function verInscricoes(torneioId: number) {
-  router.push(`/organizador/gerenciar-torneios/${torneioId}/inscricoes`)
+// Define o tipo para um objeto de torneio, espelhando o que a API retorna
+interface Tournament {
+  id: string;
+  name: string;
+  dates: string;
+  location: string;
 }
 
-// Função para contar quantas inscrições um torneio possui
-function contarInscricoes(torneioId: number): number {
-  // Usamos uma asserção de tipo para garantir que o TypeScript entenda a estrutura
-  return (inscricoes.value as Inscricao[]).filter((i: Inscricao) => i.torneioId === torneioId)
-    .length
-}
+// Variáveis reativas para controlar o estado do componente
+const tournaments = ref<Tournament[]>([])
+const isLoading = ref(true)
+const errorMessage = ref('')
+
+// onMounted é executado assim que o componente é montado no ecrã.
+onMounted(async () => {
+  try {
+    // Chama a API para obter a lista de torneios
+    const data = await callApi('/tournaments', { method: 'GET' })
+    tournaments.value = data
+  } catch (error: unknown) {
+    console.error("Falha ao obter a lista de torneios:", error)
+    if (error instanceof Error) {
+        errorMessage.value = `Não foi possível carregar os torneios. ${error.message}`
+    } else {
+        errorMessage.value = 'Ocorreu um erro desconhecido ao carregar os torneios.'
+    }
+  } finally {
+    isLoading.value = false
+  }
+})
 </script>
 
 <style scoped>
@@ -79,6 +111,10 @@ function contarInscricoes(torneioId: number): number {
   background-color: white;
   border-radius: 8px;
 }
+.sem-torneios.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
 .lista-torneios {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -91,6 +127,10 @@ function contarInscricoes(torneioId: number): number {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  transition: transform 0.2s;
+}
+.torneio-card:hover {
+    transform: translateY(-5px);
 }
 .card-content {
   padding: 1.5rem;
@@ -98,18 +138,16 @@ function contarInscricoes(torneioId: number): number {
 .torneio-card h3 {
   margin-top: 0;
 }
-.contador-inscricoes {
-  font-weight: bold;
-  color: var(--cor-texto-principal);
-  margin-top: 1rem;
-}
 .card-actions {
   padding: 1rem 1.5rem;
   background-color: #f9f9f9;
   border-top: 1px solid #eee;
   text-align: right;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
 }
-.btn-ver-inscricoes {
+.btn-acao {
   background: none;
   border: 1px solid var(--cor-texto-principal);
   color: var(--cor-texto-principal);
@@ -117,8 +155,9 @@ function contarInscricoes(torneioId: number): number {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
+  text-decoration: none;
 }
-.btn-ver-inscricoes:hover {
-  background-color: var(--cor-destaque);
+.btn-acao:hover {
+  background-color: var(--cor-destaque, #e0e0e0);
 }
 </style>
