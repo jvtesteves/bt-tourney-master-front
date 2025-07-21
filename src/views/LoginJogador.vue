@@ -22,6 +22,10 @@
         {{ isLoading ? 'Aguarde...' : (isNewPasswordRequired ? 'Definir Senha e Entrar' : 'Entrar') }}
       </button>
 
+      <div class="link-redefinir">
+        <router-link to="/redefinir-senha">Esqueci minha senha</router-link>
+      </div>
+
       <div class="link-cadastro">
         Não tem uma conta? <router-link to="/cadastro">Crie uma agora</router-link>
       </div>
@@ -171,5 +175,10 @@ button:disabled {
     text-align: center;
     margin-top: 1.5rem;
     font-size: 0.9rem;
+}
+.link-redefinir {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.9rem;
 }
 </style>

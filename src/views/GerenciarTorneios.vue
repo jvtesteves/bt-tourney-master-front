@@ -7,38 +7,34 @@
       </router-link>
     </div>
 
-    <!-- Mensagem de carregamento -->
     <div v-if="isLoading" class="sem-torneios">
       <p>A carregar torneios...</p>
     </div>
-
-    <!-- Mensagem de erro -->
     <div v-else-if="errorMessage" class="sem-torneios error">
       <p>{{ errorMessage }}</p>
     </div>
-
-    <!-- Mensagem para quando não há torneios -->
     <div v-else-if="tournaments.length === 0" class="sem-torneios">
       <p>Você ainda não criou nenhum torneio.</p>
     </div>
 
-    <!-- Lista de torneios obtida da API -->
     <div v-else class="lista-torneios">
       <div v-for="torneio in tournaments" :key="torneio.id" class="torneio-card">
         <div class="card-content">
-          <!-- Usamos as propriedades retornadas pela API: name, location, dates -->
           <h3>{{ torneio.name }}</h3>
           <p><strong>Local:</strong> {{ torneio.location }}</p>
           <p><strong>Data:</strong> {{ torneio.dates }}</p>
         </div>
         <div class="card-actions">
-           <!-- Links para as outras páginas de gestão -->
           <router-link :to="`/organizador/gerenciar-torneios/${torneio.id}/inscricoes`" class="btn-acao">
-            Ver Inscrições
+            Gerir Inscrições
           </router-link>
-          <router-link :to="`/organizador/gerenciar-torneios/${torneio.id}/resultados`" class="btn-acao">
-            Resultados
-          </router-link>
+          <button
+            @click="handleDelete(torneio.id)"
+            class="btn-acao btn-excluir"
+            :disabled="isDeleting[torneio.id]"
+          >
+            {{ isDeleting[torneio.id] ? 'A Excluir...' : 'Excluir' }}
+          </button>
         </div>
       </div>
     </div>
@@ -49,95 +45,68 @@
 import { ref, onMounted } from 'vue'
 import { callApi } from '../services/api'
 
-// Define o tipo para um objeto de torneio, espelhando o que a API retorna
 interface Tournament {
   id: string;
   name: string;
   dates: string;
   location: string;
+  createdAt: string;
 }
 
-// Variáveis reativas para controlar o estado do componente
 const tournaments = ref<Tournament[]>([])
 const isLoading = ref(true)
 const errorMessage = ref('')
+const isDeleting = ref<Record<string, boolean>>({})
 
-// onMounted é executado assim que o componente é montado no ecrã.
 onMounted(async () => {
   try {
-    // Chama a API para obter a lista de torneios
     const data = await callApi('/tournaments', { method: 'GET' })
+    data.sort((a: Tournament, b: Tournament) =>
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
     tournaments.value = data
-  } catch (error: unknown) {
-    console.error("Falha ao obter a lista de torneios:", error)
+  } catch (error) {
     if (error instanceof Error) {
-        errorMessage.value = `Não foi possível carregar os torneios. ${error.message}`
+      errorMessage.value = `Não foi possível carregar os torneios. ${error.message}`
     } else {
-        errorMessage.value = 'Ocorreu um erro desconhecido ao carregar os torneios.'
+      errorMessage.value = `Ocorreu um erro desconhecido.`
     }
   } finally {
     isLoading.value = false
   }
 })
+
+async function handleDelete(tournamentId: string) {
+  isDeleting.value[tournamentId] = true;
+  try {
+    await callApi(`/tournaments/${tournamentId}`, {
+      method: 'DELETE',
+    });
+    tournaments.value = tournaments.value.filter(t => t.id !== tournamentId);
+    alert('Torneio excluído com sucesso!');
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(`Erro ao excluir o torneio: ${error.message}`);
+    } else {
+      alert('Ocorreu um erro desconhecido ao excluir o torneio.');
+    }
+  } finally {
+    isDeleting.value[tournamentId] = false;
+  }
+}
 </script>
 
 <style scoped>
-.gerenciar-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-}
-.titulo {
-  font-size: 2.2rem;
-  margin: 0;
-}
-.btn-novo-torneio {
-  background-color: var(--cor-texto-principal);
-  color: white;
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  text-decoration: none;
-  font-weight: bold;
-}
-.sem-torneios {
-  text-align: center;
-  padding: 3rem;
-  background-color: white;
-  border-radius: 8px;
-}
-.sem-torneios.error {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-.lista-torneios {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-.torneio-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s;
-}
-.torneio-card:hover {
-    transform: translateY(-5px);
-}
-.card-content {
-  padding: 1.5rem;
-}
-.torneio-card h3 {
-  margin-top: 0;
-}
+.gerenciar-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.titulo { font-size: 2.2rem; margin: 0; }
+.btn-novo-torneio { background-color: var(--cor-texto-principal); color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; }
+.sem-torneios { text-align: center; padding: 3rem; background-color: white; border-radius: 8px; }
+.sem-torneios.error { background-color: #f8d7da; color: #721c24; }
+.lista-torneios { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+.torneio-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; justify-content: space-between; }
+.card-content { padding: 1.5rem; }
+.torneio-card h3 { margin-top: 0; }
 .card-actions {
   padding: 1rem 1.5rem;
   background-color: #f9f9f9;
@@ -156,8 +125,26 @@ onMounted(async () => {
   cursor: pointer;
   font-weight: bold;
   text-decoration: none;
+  transition: background-color 0.2s;
+  /* ATUALIZAÇÃO: Padroniza o tamanho da letra e o alinhamento */
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn-acao:hover {
-  background-color: var(--cor-destaque, #e0e0e0);
+.btn-acao:hover { background-color: #f0f0f0; }
+.btn-excluir {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+.btn-excluir:hover {
+  background-color: #dc3545;
+  color: white;
+}
+.btn-excluir:disabled {
+  border-color: #ccc;
+  color: #ccc;
+  background-color: transparent;
+  cursor: not-allowed;
 }
 </style>

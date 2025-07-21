@@ -16,6 +16,9 @@ import DetalhesTorneio from '../views/DetalhesTorneio.vue'
 import InscricaoTorneio from '../views/InscricaoTorneio.vue'
 import InscricaoConfirmada from '../views/InscricaoConfirmada.vue'
 import ChaveamentoTorneio from '../views/ChaveamentoTorneio.vue'
+import HistoricoJogador from '../views/HistoricoJogador.vue'
+import MinhasInscricoes from '../views/MinhasInscricoes.vue'
+import RedefinirSenha from '../views/RedefinirSenha.vue'
 
 const routes = [
   // Rotas Públicas e de Login
@@ -23,9 +26,10 @@ const routes = [
   { path: '/login/organizador', name: 'LoginOrganizador', component: LoginOrganizador, meta: { requiresGuest: true } },
   { path: '/login/jogador', name: 'LoginJogador', component: LoginJogador, meta: { requiresGuest: true } },
 
-  // Adiciona as rotas para o fluxo de cadastro
+  // Adiciona as rotas para o fluxo de cadastro e redefinição de senha
   { path: '/cadastro', name: 'CadastroUsuario', component: CadastroUsuario, meta: { requiresGuest: true } },
   { path: '/confirmacao', name: 'ConfirmacaoCadastro', component: ConfirmacaoView, meta: { requiresGuest: true } },
+  { path: '/redefinir-senha', name: 'RedefinirSenha', component: RedefinirSenha, meta: { requiresGuest: true } },
 
   // Rotas Protegidas do Organizador
   { path: '/organizador/dashboard', name: 'DashboardOrganizador', component: TelaPrincipalOrganizador, meta: { requiresAuth: true, tipo: 'organizador' } },
@@ -34,8 +38,10 @@ const routes = [
   { path: '/organizador/gerenciar-torneios/:id/inscricoes', name: 'GerenciarInscricoes', component: GerenciarInscricoes, meta: { requiresAuth: true, tipo: 'organizador' } },
   { path: '/organizador/gerenciar-torneios/:id/resultados', name: 'GerenciarResultados', component: GerenciarResultados, meta: { requiresAuth: true, tipo: 'organizador' } },
 
-  // Rota Protegida do Jogador
+  // Rotas Protegidas do Jogador
   { path: '/jogador/dashboard', name: 'DashboardJogador', component: DashboardJogador, meta: { requiresAuth: true, tipo: 'jogador' } },
+  { path: '/jogador/historico', name: 'HistoricoJogador', component: HistoricoJogador, meta: { requiresAuth: true, tipo: 'jogador' } },
+  { path: '/jogador/inscricoes', name: 'MinhasInscricoes', component: MinhasInscricoes, meta: { requiresAuth: true, tipo: 'jogador' } },
 
   // Rotas Públicas
   { path: '/torneios', name: 'ListaPublicaTorneios', component: ListaPublicaTorneios },
