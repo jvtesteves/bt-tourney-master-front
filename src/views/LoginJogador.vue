@@ -85,7 +85,6 @@ async function fazerLogin() {
       errorMessage.value = `Passo de login inesperado: ${nextStep.signInStep}`
     }
 
-  // CORREÇÃO: Usa 'unknown' e verifica o tipo do erro
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = error.message || 'Ocorreu um erro.';
@@ -103,7 +102,6 @@ async function handleNewPasswordSubmit() {
   try {
     await confirmSignIn({ challengeResponse: newPassword.value })
     await fetchAttributesAndLogin('jogador');
-  // CORREÇÃO: Usa 'unknown' e verifica o tipo do erro
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = `Erro ao definir nova senha: ${error.message}`

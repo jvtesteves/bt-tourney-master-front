@@ -97,16 +97,58 @@ async function handleDelete(tournamentId: string) {
 </script>
 
 <style scoped>
-.gerenciar-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
-.titulo { font-size: 2.2rem; margin: 0; }
-.btn-novo-torneio { background-color: var(--cor-texto-principal); color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; }
-.sem-torneios { text-align: center; padding: 3rem; background-color: white; border-radius: 8px; }
-.sem-torneios.error { background-color: #f8d7da; color: #721c24; }
-.lista-torneios { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
-.torneio-card { background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); display: flex; flex-direction: column; justify-content: space-between; }
-.card-content { padding: 1.5rem; }
-.torneio-card h3 { margin-top: 0; }
+.gerenciar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+.titulo {
+  font-size: 2.2rem;
+  margin: 0;
+}
+.btn-novo-torneio {
+  background-color: var(--cor-texto-principal);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.sem-torneios {
+  text-align: center;
+  padding: 3rem;
+  background-color: white;
+  border-radius: 8px;
+}
+.sem-torneios.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.lista-torneios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.torneio-card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.card-content {
+  padding: 1.5rem;
+}
+.torneio-card h3 {
+  margin-top: 0;
+}
 .card-actions {
   padding: 1rem 1.5rem;
   background-color: #f9f9f9;
@@ -126,7 +168,6 @@ async function handleDelete(tournamentId: string) {
   font-weight: bold;
   text-decoration: none;
   transition: background-color 0.2s;
-  /* ATUALIZAÇÃO: Padroniza o tamanho da letra e o alinhamento */
   font-size: 0.9rem;
   display: inline-flex;
   align-items: center;

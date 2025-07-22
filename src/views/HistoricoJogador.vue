@@ -33,7 +33,6 @@
           </span>
         </div>
         <div class="card-actions">
-          <!-- Este botão poderá, no futuro, levar a uma página com os detalhes dos jogos -->
           <router-link :to="`/torneio/${item.tournamentId}/chaves`" class="btn-acao">
             Ver Chaveamento
           </router-link>
@@ -59,7 +58,6 @@ interface HistoryEntry {
   tournamentName: string;
   category: string;
   finalStatus: 'Campeão' | 'Finalista' | 'Participou';
-  // Adicionámos os outros campos para consistência, embora não sejam todos usados aqui
   team: string[];
   status: string;
   playerMatches: object[];
@@ -85,7 +83,6 @@ function getStatusClass(status: string): string {
 // onMounted é executado assim que o componente é carregado
 onMounted(async () => {
   try {
-    // Chama o nosso endpoint de histórico melhorado
     const data = await callApi('/my-history')
     history.value = data
   } catch (error) {

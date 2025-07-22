@@ -90,25 +90,108 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Os seus estilos permanecem os mesmos */
-.inscricoes-container { max-width: 1000px; margin: 2rem auto; padding: 2rem; }
-.navegacao-voltar { margin-bottom: 1.5rem; }
-.voltar-link { text-decoration: none; font-weight: bold; color: var(--cor-texto-principal); display: inline-block; }
-.titulo { font-size: 2.2rem; }
-.subtitulo { font-size: 1.1rem; color: #555; margin-bottom: 2.5rem; }
-.feedback-container { text-align: center; padding: 2rem; background-color: #f9f9f9; border-radius: 8px; }
-.feedback-container.error { background-color: #f8d7da; color: #721c24; }
-.lista-inscricoes { display: flex; flex-direction: column; gap: 1rem; }
-.inscricao-card { display: grid; grid-template-columns: 2fr 2fr 1fr auto; align-items: center; gap: 1.5rem; background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07); }
-.info-principal h3 { margin: 0; font-size: 1.3rem; }
-.info-principal .categoria { font-size: 1rem; color: #555; font-style: italic; }
-.info-dupla p { margin: 0; }
-.info-estado { text-align: right; }
-.status-badge { padding: 0.3rem 0.8rem; border-radius: 12px; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
-.status-pendente { background-color: #fef08a; color: #a16207; }
-.status-aprovada { background-color: #dcfce7; color: #166534; }
-.status-rejeitada { background-color: #fee2e2; color: #991b1b; }
-.card-actions { text-align: right; }
-.btn-acao { background: none; border: 1px solid var(--cor-texto-principal); color: var(--cor-texto-principal); padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; }
-.btn-link { display: inline-block; margin-top: 1rem; background-color: var(--cor-texto-principal); color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; }
+.inscricoes-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
+}
+.titulo {
+  font-size: 2.2rem;
+}
+.subtitulo {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 2.5rem;
+}
+.feedback-container {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.feedback-container.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.lista-inscricoes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.inscricao-card {
+  display: grid;
+  grid-template-columns: 2fr 2fr 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+.info-principal h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.info-principal .categoria {
+  font-size: 1rem;
+  color: #555;
+  font-style: italic;
+}
+.info-dupla p {
+  margin: 0;
+}
+.info-estado {
+  text-align: right;
+}
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+.status-pendente {
+  background-color: #fef08a;
+  color: #a16207;
+}
+.status-aprovada {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.status-rejeitada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.card-actions {
+  text-align: right;
+}
+.btn-acao {
+  background: none;
+  border: 1px solid var(--cor-texto-principal);
+  color: var(--cor-texto-principal);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: none;
+}
+.btn-link {
+  display: inline-block;
+  margin-top: 1rem;
+  background-color: var(--cor-texto-principal);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+}
 </style>

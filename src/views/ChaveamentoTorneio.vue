@@ -34,14 +34,12 @@
             <div v-for="match in getMatchesForRound(roundNumber)" :key="match.id" class="jogo-card">
               <div class="info-duplas">
                 <div class="dupla" :class="{ vencedor: match.winner === 'team1' }">
-                  <!-- ATUALIZAÇÃO: Lógica para exibir Jogador ou Dupla -->
                   <span>{{ isDuoCategory ? match.team1.team.join(' & ') : match.team1.team[0] }}</span>
                   <strong v-if="match.result" class="resultado">{{ getSetScore(match).team1 }}</strong>
                 </div>
                 <div class="vs">vs</div>
                 <div class="dupla" v-if="match.team2.id !== 'BYE'" :class="{ vencedor: match.winner === 'team2' }">
                   <strong v-if="match.result" class="resultado">{{ getSetScore(match).team2 }}</strong>
-                  <!-- ATUALIZAÇÃO: Lógica para exibir Jogador ou Dupla -->
                   <span>{{ isDuoCategory ? match.team2.team.join(' & ') : match.team2.team[0] }}</span>
                 </div>
                 <div class="dupla" v-else>
@@ -95,7 +93,6 @@ interface Match {
   schedule?: Schedule;
 }
 interface Draw { tournamentId: string; matches: Match[] }
-// ATUALIZAÇÃO: Adiciona a categoria à interface do Torneio
 interface Tournament { name: string; category: string; }
 
 const route = useRoute()
@@ -162,26 +159,125 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Os seus estilos permanecem os mesmos */
-.chaveamento-container { max-width: 1000px; margin: 2rem auto; padding: 2rem; }
-.navegacao-voltar { margin-bottom: 1.5rem; }
-.voltar-link { text-decoration: none; font-weight: bold; color: var(--cor-texto-principal); display: inline-block; }
-.titulo { text-align: center; font-size: 2.5rem; }
-.subtitulo { text-align: center; font-size: 1.5rem; margin-bottom: 3rem; color: #555; }
-.rodada-content h4 { font-size: 1.2rem; text-transform: uppercase; color: #777; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-bottom: 2rem; }
-.lista-jogos { display: flex; flex-direction: column; gap: 1rem; }
-.jogo-card { display: grid; grid-template-columns: 2fr 1fr; align-items: center; background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07); }
-.info-duplas { display: flex; flex-direction: column; gap: 0.8rem; }
-.dupla { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-size: 1.1rem; }
-.vs { font-weight: bold; color: var(--cor-destaque); text-align: center; }
-.bye { font-style: italic; color: #999; }
-.feedback-container { text-align: center; padding: 2rem; background-color: #f9f9f9; border-radius: 8px; }
-.feedback-container.error { color: #721c24; background-color: #f8d7da; }
-.resultado { font-size: 1.3rem; font-weight: bold; }
-.vencedor { font-weight: bold; color: #2a9d8f; }
-.acoes-rodape { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #eee; display: flex; justify-content: center; gap: 1rem; }
-.btn-acao { background-color: var(--cor-texto-principal); color: white; padding: 0.8rem 1.5rem; border-radius: 4px; text-decoration: none; font-weight: bold; border: none; cursor: pointer; }
-.info-agendamento { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; font-size: 0.9rem; color: #333; }
-.info-item { background-color: #f0f2f5; padding: 0.4rem 0.8rem; border-radius: 12px; }
-.info-item.a-definir { font-style: italic; color: #777; background-color: transparent; }
+.chaveamento-container {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
+}
+.titulo {
+  text-align: center;
+  font-size: 2.5rem;
+}
+.subtitulo {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 3rem;
+  color: #555;
+}
+.rodada-content h4 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  color: #777;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+  margin-bottom: 2rem;
+}
+.lista-jogos {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.jogo-card {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  align-items: center;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+.info-duplas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.dupla {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1.1rem;
+}
+.vs {
+  font-weight: bold;
+  color: var(--cor-destaque);
+  text-align: center;
+}
+.bye {
+  font-style: italic;
+  color: #999;
+}
+.feedback-container {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.feedback-container.error {
+  color: #721c24;
+  background-color: #f8d7da;
+}
+.resultado {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+.vencedor {
+  font-weight: bold;
+  color: #2a9d8f;
+}
+.acoes-rodape {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.btn-acao {
+  background-color: var(--cor-texto-principal);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+.info-agendamento {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+.info-item {
+  background-color: #f0f2f5;
+  padding: 0.4rem 0.8rem;
+  border-radius: 12px;
+}
+.info-item.a-definir {
+  font-style: italic;
+  color: #777;
+  background-color: transparent;
+}
 </style>

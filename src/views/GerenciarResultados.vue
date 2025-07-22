@@ -138,7 +138,6 @@ const isDuoCategory = computed(() => {
   return torneio.value?.category.toLowerCase().includes('duo') ?? false;
 });
 
-// Funções
 function getMatchesForRound(roundNumber: number): Match[] {
   return draw.value?.matches.filter(m => m.round === roundNumber) || [];
 }
@@ -258,35 +257,185 @@ onMounted(fetchData);
 </script>
 
 <style scoped>
-/* Os seus estilos permanecem os mesmos */
-.gerenciar-resultados-container { max-width: 1200px; margin: 2rem auto; padding: 2rem; }
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-.titulo { font-size: 2rem; margin: 0; }
-.voltar-link { display: inline-block; margin-bottom: 1.5rem; font-weight: bold; text-decoration: none; color: var(--cor-texto-principal); }
-.feedback-container { text-align: center; padding: 3rem; background-color: #f9f9f9; border-radius: 8px; }
-.feedback-container.error { background-color: #f8d7da; color: #721c24; }
-.campeao-container { text-align: center; padding: 1.5rem; background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 1.3rem; margin-bottom: 2rem; }
-.rodadas-container { display: flex; flex-direction: column; gap: 2.5rem; }
-.rodada h4 { font-size: 1.2rem; text-transform: uppercase; color: #777; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-.lista-jogos { display: flex; flex-direction: column; gap: 1.5rem; }
-.jogo-card { display: grid; grid-template-columns: 2fr 2fr 3fr; align-items: center; background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08); gap: 2rem; }
-.info-duplas { display: flex; flex-direction: column; gap: 1rem; font-size: 1.1rem; font-weight: 500; padding-right: 2rem; border-right: 1px solid #eee; }
-.dupla { display: flex; justify-content: space-between; align-items: center; }
-.vs { font-weight: bold; color: var(--cor-destaque, #888); text-align: center; }
-.bye { font-style: italic; color: #999; }
-.form-agendamento { display: flex; align-items: flex-end; gap: 1rem; padding-right: 2rem; border-right: 1px solid #eee; }
-.input-agendamento { display: flex; flex-direction: column; }
-.input-agendamento label { font-size: 0.8rem; color: #555; margin-bottom: 0.3rem; }
-.input-agendamento input { border: 1px solid #ccc; padding: 0.6rem; border-radius: 4px; }
-.btn-agendar { padding: 0.6rem 1rem; font-size: 0.9rem; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; }
-.form-resultado { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; }
-.sets-container { display: flex; gap: 0.5rem; }
-.set-input { display: flex; flex-direction: column; align-items: center; gap: 0.2rem; }
-.set-input label { font-size: 0.8rem; font-weight: bold; color: #777; }
-.input-resultado { width: 40px; padding: 0.5rem 0; text-align: center; font-size: 1.1rem; border: 1px solid #ccc; border-radius: 4px; }
-.set-input span { display: none; }
-.btn-salvar { padding: 0.6rem 1.2rem; border: none; border-radius: 5px; font-weight: 500; cursor: pointer; background-color: #007bff; color: white; }
-.btn-salvar:disabled { background-color: #28a745; cursor: not-allowed; }
-.btn-avancar-ronda { padding: 0.8rem 1.5rem; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; background-color: #fd9e02; color: white; }
-.btn-avancar-ronda:disabled { background-color: #ccc; cursor: not-allowed; }
+.gerenciar-resultados-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.titulo {
+  font-size: 2rem;
+  margin: 0;
+}
+.voltar-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--cor-texto-principal);
+}
+.feedback-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.feedback-container.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.campeao-container {
+  text-align: center;
+  padding: 1.5rem;
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+.rodadas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+.rodada h4 {
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  color: #777;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+.lista-jogos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.jogo-card {
+  display: grid;
+  grid-template-columns: 2fr 2fr 3fr;
+  align-items: center;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  gap: 2rem;
+}
+.info-duplas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding-right: 2rem;
+  border-right: 1px solid #eee;
+}
+.dupla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.vs {
+  font-weight: bold;
+  color: var(--cor-destaque, #888);
+  text-align: center;
+}
+.bye {
+  font-style: italic;
+  color: #999;
+}
+.form-agendamento {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  padding-right: 2rem;
+  border-right: 1px solid #eee;
+}
+.input-agendamento {
+  display: flex;
+  flex-direction: column;
+}
+.input-agendamento label {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 0.3rem;
+}
+.input-agendamento input {
+  border: 1px solid #ccc;
+  padding: 0.6rem;
+  border-radius: 4px;
+}
+.btn-agendar {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.form-resultado {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+}
+.sets-container {
+  display: flex;
+  gap: 0.5rem;
+}
+.set-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+}
+.set-input label {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #777;
+}
+.input-resultado {
+  width: 40px;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 1.1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.set-input span {
+  display: none;
+}
+.btn-salvar {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+.btn-salvar:disabled {
+  background-color: #28a745;
+  cursor: not-allowed;
+}
+.btn-avancar-ronda {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #fd9e02;
+  color: white;
+}
+.btn-avancar-ronda:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 </style>

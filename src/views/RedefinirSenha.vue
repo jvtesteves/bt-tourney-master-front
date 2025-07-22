@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-// CORREÇÃO: useRoute não é mais necessário, então foi removido.
 import { resetPassword, confirmResetPassword, signOut } from 'aws-amplify/auth';
 
 const email = ref('');
@@ -71,7 +70,6 @@ const step = ref<'request' | 'confirm'>('request');
 onMounted(async () => {
   try {
     await signOut();
-  // CORREÇÃO: Como a variável 'error' não era usada, podemos omiti-la do catch.
   } catch {
     console.log("Nenhum utilizador logado para deslogar, a continuar para a redefinição de senha.");
   }
@@ -129,17 +127,76 @@ function handleSubmit() {
 </script>
 
 <style scoped>
-.redefinir-senha-container { display: flex; justify-content: center; align-items: center; padding: 2rem; }
-.form-redefinir { width: 100%; max-width: 450px; padding: 2rem; background-color: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-h2, .subtitulo { text-align: center; }
-.subtitulo { color: #555; margin-bottom: 1.5rem; }
-.form-grupo { margin-bottom: 1rem; }
-label { display: block; margin-bottom: 0.5rem; }
-input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-.btn-redefinir { width: 100%; padding: 0.8rem; background-color: var(--cor-texto-principal); color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
-.btn-redefinir:disabled { background-color: #ccc; }
-.error-message { color: #e74c3c; text-align: center; margin-bottom: 1rem; }
-.success-message { color: #155724; background-color: #d4edda; text-align: center; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
-.link-login-agora { font-weight: bold; display: block; margin-top: 0.5rem; }
-.link-voltar { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; display: block; }
+.redefinir-senha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+.form-redefinir {
+  width: 100%;
+  max-width: 450px;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+h2, .subtitulo {
+  text-align: center;
+}
+.subtitulo {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+.form-grupo {
+  margin-bottom: 1rem;
+}
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+.btn-redefinir {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: var(--cor-texto-principal);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.btn-redefinir:disabled {
+  background-color: #ccc;
+}
+.error-message {
+  color: #e74c3c;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+.success-message {
+  color: #155724;
+  background-color: #d4edda;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.link-login-agora {
+  font-weight: bold;
+  display: block;
+  margin-top: 0.5rem;
+}
+.link-voltar {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  display: block;
+}
 </style>

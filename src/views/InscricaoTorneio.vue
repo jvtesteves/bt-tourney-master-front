@@ -44,7 +44,6 @@ import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { callPublicApi, callApi } from '../services/api'
 
-// Interface atualizada
 interface Tournament {
   id: string;
   name: string;
@@ -123,25 +122,89 @@ async function submeterInscricao() {
 </script>
 
 <style scoped>
-.inscricao-container { max-width: 800px; margin: 2rem auto; padding: 2rem; }
-.navegacao-voltar { margin-bottom: 1.5rem; }
-.voltar-link { text-decoration: none; font-weight: bold; color: var(--cor-texto-principal); display: inline-block; }
-.feedback-container { text-align: center; padding: 3rem; background-color: #f9f9f9; border-radius: 8px; }
-.feedback-container.error { background-color: #f8d7da; color: #721c24; }
-.conteudo-inscricao { background-color: white; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
-.titulo { font-size: 2.2rem; text-align: center; }
-.nome-torneio { font-size: 1.5rem; text-align: center; color: var(--cor-texto-principal); margin-top: 0.5rem; }
-.subtitulo { text-align: center; font-size: 1.1rem; opacity: 0.8; margin-bottom: 2rem; }
-.form-inscricao { padding-top: 1rem; }
-.form-grupo { margin-bottom: 1.5rem; }
-.form-grupo label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-.form-grupo input { width: 100%; padding: 0.8rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; box-sizing: border-box; }
+.inscricao-container {
+   max-width: 800px;
+   margin: 2rem auto;
+   padding: 2rem;
+}
+.navegacao-voltar {
+  margin-bottom: 1.5rem;
+}
+.voltar-link {
+  text-decoration: none;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  display: inline-block;
+}
+.feedback-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+.feedback-container.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.conteudo-inscricao {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.titulo {
+  font-size: 2.2rem;
+  text-align: center;
+}
+.nome-torneio {
+  font-size: 1.5rem;
+  text-align: center;
+  color: var(--cor-texto-principal);
+  margin-top: 0.5rem;
+}
+.subtitulo {
+  text-align: center;
+  font-size: 1.1rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+.form-inscricao {
+  padding-top: 1rem;
+}
+.form-grupo {
+  margin-bottom: 1.5rem;
+}
+.form-grupo label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+.form-grupo input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
 .info-solo {
   text-align: center;
   font-style: italic;
   color: #555;
   margin-bottom: 1.5rem;
 }
-.btn-confirmar { width: 100%; background-color: var(--cor-texto-principal); color: white; padding: 0.8rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-.btn-confirmar:disabled { background-color: #ccc; }
+.btn-confirmar {
+  width: 100%;
+  background-color: var(--cor-texto-principal);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-confirmar:disabled {
+  background-color: #ccc;
+}
 </style>

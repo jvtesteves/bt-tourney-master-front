@@ -53,7 +53,6 @@ async function handleConfirmacao() {
     });
 
     alert('Conta confirmada com sucesso! Por favor, faça o login.');
-    // Redireciona para a página de login após a confirmação
     router.push('/login/jogador');
 
   } catch (error: unknown) {

@@ -38,7 +38,7 @@ interface Tournament {
   name: string;
   location: string;
   dates: string;
-  createdAt: string; // Precisamos do createdAt para ordenar
+  createdAt: string;
 }
 
 const router = useRouter()
@@ -71,15 +71,58 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Os seus estilos permanecem os mesmos */
-.lista-publica-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-.titulo { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
-.subtitulo { text-align: center; margin-bottom: 3rem; font-size: 1.2rem; opacity: 0.8; }
-.sem-torneios { text-align: center; padding: 3rem; background-color: #fff; border-radius: 8px; }
-.sem-torneios.error { background-color: #f8d7da; color: #721c24; }
-.lista-torneios { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
-.torneio-card { background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.torneio-card:hover { transform: translateY(-5px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08); }
-.torneio-card h3 { margin-top: 0; color: var(--cor-texto-principal); }
-.ver-mais { display: inline-block; margin-top: 1rem; font-weight: bold; color: var(--cor-texto-principal); text-decoration: underline; }
+.lista-publica-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.titulo {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+.subtitulo {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+.sem-torneios {
+  text-align: center;
+  padding: 3rem;
+  background-color: #fff;
+  border-radius: 8px;
+}
+.sem-torneios.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.lista-torneios {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+.torneio-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.torneio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+.torneio-card h3 {
+  margin-top: 0;
+  color: var(--cor-texto-principal);
+}
+.ver-mais {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: var(--cor-texto-principal);
+  text-decoration: underline;
+}
 </style>
