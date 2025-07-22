@@ -47,7 +47,7 @@
         </button>
       </div>
 
-      <div class="link-voltar">
+      <div v-if="!successMessage" class="link-voltar">
         <router-link to="/login/jogador">&larr; Voltar para o Login</router-link>
       </div>
     </form>
@@ -55,9 +55,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-// Importa as funções necessárias da Amplify
-import { resetPassword, confirmResetPassword } from 'aws-amplify/auth';
+import { ref, onMounted } from 'vue';
+// CORREÇÃO: useRoute não é mais necessário, então foi removido.
+import { resetPassword, confirmResetPassword, signOut } from 'aws-amplify/auth';
 
 const email = ref('');
 const confirmationCode = ref('');
@@ -66,17 +66,23 @@ const confirmNewPassword = ref('');
 const isLoading = ref(false);
 const errorMessage = ref('');
 const successMessage = ref('');
-const step = ref<'request' | 'confirm'>('request'); // Controla a etapa do formulário
+const step = ref<'request' | 'confirm'>('request');
 
-// Função para a primeira etapa: pedir o código
+onMounted(async () => {
+  try {
+    await signOut();
+  // CORREÇÃO: Como a variável 'error' não era usada, podemos omiti-la do catch.
+  } catch {
+    console.log("Nenhum utilizador logado para deslogar, a continuar para a redefinição de senha.");
+  }
+});
+
 async function handleRequestCode() {
   isLoading.value = true;
   errorMessage.value = '';
   try {
     await resetPassword({ username: email.value });
-    // Se for bem-sucedido, avança para a próxima etapa
     step.value = 'confirm';
-  // CORREÇÃO: Usa 'unknown' e verifica o tipo do erro
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = error.message || 'Ocorreu um erro.';
@@ -88,7 +94,6 @@ async function handleRequestCode() {
   }
 }
 
-// Função para a segunda etapa: confirmar a nova senha
 async function handleConfirmReset() {
   if (newPassword.value !== confirmNewPassword.value) {
     errorMessage.value = 'As senhas não coincidem.';
@@ -102,9 +107,7 @@ async function handleConfirmReset() {
       confirmationCode: confirmationCode.value,
       newPassword: newPassword.value,
     });
-    // Se for bem-sucedido, exibe a mensagem de sucesso
     successMessage.value = 'A sua senha foi redefinida com sucesso!';
-  // CORREÇÃO: Usa 'unknown' e verifica o tipo do erro
   } catch (error: unknown) {
     if (error instanceof Error) {
       errorMessage.value = error.message || 'Ocorreu um erro.';
@@ -116,7 +119,6 @@ async function handleConfirmReset() {
   }
 }
 
-// Função principal que decide qual ação tomar
 function handleSubmit() {
   if (step.value === 'request') {
     handleRequestCode();
