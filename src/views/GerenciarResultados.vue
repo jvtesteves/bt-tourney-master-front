@@ -460,18 +460,5 @@ onMounted(fetchData);
     flex-direction: column;
     align-items: center;
   }
-  /*.form-agendamento {
-    border-left: none;
-    border-right: none;
-    padding: 1.5rem 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-  }*/
 }
 </style>
