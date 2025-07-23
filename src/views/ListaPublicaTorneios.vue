@@ -125,4 +125,10 @@ onMounted(async () => {
   color: var(--cor-texto-principal);
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .lista-torneios {
+    grid-template-columns: 1fr;
+  }
+}
 </style>

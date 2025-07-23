@@ -189,23 +189,114 @@ async function updateStatus(inscriptionId: string, newStatus: 'Aprovada' | 'Reje
   align-items: center;
   justify-content: center;
 }
-.btn-acao-header.btn-secundario { background-color: var(--cor-texto-principal); opacity: 0.9; }
-.btn-acao-header.btn-secundario:hover { opacity: 1; }
-.btn-acao-header:disabled { background-color: #a9a9a9; color: white; cursor: not-allowed; opacity: 0.7; }
-.lista-inscricoes { display: flex; flex-direction: column; gap: 1rem; }
-.inscricao-card { background-color: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); display: flex; justify-content: space-between; align-items: center; }
-.info-inscricao p { margin: 0; font-size: 1.1rem; }
-.info-inscricao .categoria { font-style: italic; color: #555; }
-.status-e-acoes { display: flex; align-items: center; gap: 1rem; }
-.status-badge { padding: 0.3rem 0.8rem; border-radius: 12px; font-weight: bold; font-size: 0.9rem; }
-.status-pendente { background-color: #fef08a; color: #a16207; }
-.status-aprovada { background-color: #dcfce7; color: #166534; }
-.status-rejeitada { background-color: #fee2e2; color: #991b1b; }
-.botoes-acao { display: flex; gap: 0.5rem; }
-.btn-aprovar, .btn-rejeitar { padding: 0.5rem 1rem; border: none; border-radius: 5px; font-weight: 500; cursor: pointer; transition: opacity 0.2s; }
-.btn-aprovar { background-color: #22c55e; color: white; }
-.btn-rejeitar { background-color: #ef4444; color: white; }
-.btn-aprovar:hover, .btn-rejeitar:hover { opacity: 0.8; }
-.feedback-container { background-color: white; padding: 2rem; text-align: center; border-radius: 8px; }
-.feedback-container.error { background-color: #f8d7da; color: #721c24; }
+.btn-acao-header.btn-secundario {
+  background-color: var(--cor-texto-principal);
+  opacity: 0.9;
+}
+.btn-acao-header.btn-secundario:hover {
+  opacity: 1;
+}
+.btn-acao-header:disabled {
+  background-color: #a9a9a9;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+.lista-inscricoes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.inscricao-card {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.info-inscricao p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+.info-inscricao .categoria {
+  font-style: italic;
+  color: #555;
+}
+.status-e-acoes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.status-badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.status-pendente {
+  background-color: #fef08a;
+  color: #a16207;
+}
+.status-aprovada {
+  background-color: #dcfce7;
+  color: #166534;
+}
+.status-rejeitada {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+.botoes-acao {
+  display: flex;
+  gap: 0.5rem;
+}
+.btn-aprovar, .btn-rejeitar {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-aprovar {
+  background-color: #22c55e;
+  color: white;
+}
+.btn-rejeitar {
+  background-color: #ef4444;
+  color: white;
+}
+.btn-aprovar:hover, .btn-rejeitar:hover {
+  opacity: 0.8;
+}
+.feedback-container {
+  background-color: white;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 8px;
+}
+.feedback-container.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .inscricao-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .status-e-acoes {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
 </style>

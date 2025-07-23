@@ -280,4 +280,25 @@ onMounted(async () => {
   color: #777;
   background-color: transparent;
 }
+
+@media (max-width: 768px) {
+  .jogo-card {
+    grid-template-columns: 1fr;
+  }
+  .info-duplas {
+    flex-direction: column;
+    align-items: center;
+  }
+  .vs {
+    margin: 1rem 0;
+  }
+  .info-agendamento {
+    align-items: center;
+  }
+  .acoes-rodape {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+}
 </style>

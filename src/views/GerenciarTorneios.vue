@@ -188,4 +188,17 @@ async function handleDelete(tournamentId: string) {
   background-color: transparent;
   cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .lista-torneios {
+    grid-template-columns: 1fr;
+  }
+}
+
 </style>

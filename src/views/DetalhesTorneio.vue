@@ -223,4 +223,24 @@ onMounted(async () => {
   padding: 1rem 2rem;
   border-radius: 4px;
 }
+
+@media (max-width: 768px) {
+  .titulo-torneio {
+    font-size: 2rem;
+  }
+
+  .local-torneio {
+    font-size: 1.2rem;
+  }
+
+  .acoes-principais {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .btn-inscrever, .btn-ver-chaves {
+    width: 100%;
+  }
+}
+
 </style>

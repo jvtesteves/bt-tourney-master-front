@@ -438,4 +438,20 @@ onMounted(fetchData);
   background-color: #ccc;
   cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+  .jogo-card {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .info-duplas {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  .info-agendamento {
+    align-items: flex-start;
+  }
+}
 </style>

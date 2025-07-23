@@ -68,4 +68,14 @@ const auth = useAuth()
 .dashboard-card p {
   line-height: 1.6;
 }
+
+@media (max-width: 768px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+
+  .titulo {
+    font-size: 2rem;
+  }
+}
 </style>

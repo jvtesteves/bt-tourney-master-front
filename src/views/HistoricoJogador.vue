@@ -188,4 +188,17 @@ onMounted(async () => {
   font-weight: bold;
   text-decoration: none;
 }
+
+@media (max-width: 768px) {
+  .inscricao-card, .historico-card {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    justify-items: start;
+  }
+
+  .info-estado, .info-desempenho, .card-actions {
+    width: 100%;
+    text-align: left;
+  }
+}
 </style>

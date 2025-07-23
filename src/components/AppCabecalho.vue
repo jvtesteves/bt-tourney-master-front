@@ -86,4 +86,22 @@ async function fazerLogout() {
 .logout-link {
   cursor: pointer;
 }
+
+/* --- Estilos para Dispositivos Móveis --- */
+@media (max-width: 850px) {
+  .container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .navegacao {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+  .navegacao a {
+    font-size: 0.9rem;
+  }
+}
 </style>

@@ -122,4 +122,11 @@ input {
   text-align: center;
   margin-bottom: 1rem;
 }
+
+@media (max-width: 768px) {
+  .form-login, .form-cadastro, .form-confirmacao, .form-redefinir {
+    box-shadow: none;
+    padding: 1rem;
+  }
+}
 </style>

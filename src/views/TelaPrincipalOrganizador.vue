@@ -75,4 +75,14 @@ function navegarPara(caminho: string) {
   margin-top: 0;
   color: var(--cor-texto-principal);
 }
+
+@media (max-width: 768px) {
+  .acoes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .titulo {
+    font-size: 2rem;
+  }
+}
 </style>
