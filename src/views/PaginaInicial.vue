@@ -23,7 +23,8 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: calc(100vh - 120px); /* Ajusta a altura para descontar o cabeçalho */
+  height: calc(100vh - 120px);
+  padding: 1rem;
 }
 .titulo {
   font-size: 3rem;
@@ -67,5 +68,20 @@
 }
 .publico {
   background-color: #f4a261;
+}
+
+@media (max-width: 768px) {
+  .titulo {
+    font-size: 2.2rem;
+  }
+  .subtitulo {
+    font-size: 1rem;
+  }
+  .btn-acesso {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    max-width: 300px;
+  }
 }
 </style>

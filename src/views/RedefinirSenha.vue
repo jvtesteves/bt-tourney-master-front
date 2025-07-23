@@ -199,4 +199,11 @@ input {
   font-size: 0.9rem;
   display: block;
 }
+
+@media (max-width: 768px) {
+  .form-login, .form-cadastro, .form-confirmacao, .form-redefinir {
+    box-shadow: none;
+    padding: 1rem;
+  }
+}
 </style>

@@ -207,4 +207,14 @@ async function submeterInscricao() {
 .btn-confirmar:disabled {
   background-color: #ccc;
 }
+
+@media (max-width: 768px) {
+  .titulo, .nome-torneio {
+    font-size: 1.8rem;
+  }
+
+  .conteudo-inscricao {
+    padding: 1.5rem;
+  }
+}
 </style>

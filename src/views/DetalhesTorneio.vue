@@ -30,7 +30,6 @@
       </div>
 
       <div class="acoes-principais">
-        <!-- ATUALIZAÇÃO: A lógica para mostrar o botão agora inclui as novas regras -->
         <router-link
           v-if="auth.tipoDeUtilizador.value !== 'organizador' && !inscricoesEncerradas"
           :to="`/torneio/${torneio.id}/inscrever`"
@@ -222,5 +221,20 @@ onMounted(async () => {
   background-color: #f0f2f5;
   padding: 1rem 2rem;
   border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .titulo-torneio {
+    font-size: 2rem;
+  }
+
+  .local-torneio {
+    font-size: 1.2rem;
+  }
+
+  .acoes-principais {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 </style>

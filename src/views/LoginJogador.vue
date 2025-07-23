@@ -179,4 +179,11 @@ button:disabled {
   margin-top: 1rem;
   font-size: 0.9rem;
 }
+
+@media (max-width: 768px) {
+  .form-login, .form-cadastro, .form-confirmacao, .form-redefinir {
+    box-shadow: none;
+    padding: 1rem;
+  }
+}
 </style>

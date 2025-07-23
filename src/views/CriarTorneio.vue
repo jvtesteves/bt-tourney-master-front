@@ -214,4 +214,15 @@ async function submeterFormulario() {
   margin-bottom: 1.5rem;
   border: 1px solid #f5c6cb;
 }
+
+@media (max-width: 768px) {
+  .form-grupo-datas {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .titulo {
+    font-size: 1.8rem;
+  }
+}
 </style>
