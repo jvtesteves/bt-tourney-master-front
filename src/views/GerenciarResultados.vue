@@ -36,13 +36,15 @@
           <h4>Ronda {{ roundNumber }}</h4>
           <div class="lista-jogos">
             <div v-for="match in getMatchesForRound(roundNumber)" :key="match.id" class="jogo-card">
+              <!-- Coluna 1: Informações das Duplas -->
               <div class="info-duplas">
-                  <div class="dupla">{{ isDuoCategory ? match.team1.team.join(' & ') : match.team1.team[0] }}</div>
-                  <div class="vs">vs</div>
-                  <div class="dupla" v-if="match.team2.id !== 'BYE'">{{ isDuoCategory ? match.team2.team.join(' & ') : match.team2.team[0] }}</div>
-                  <div class="dupla" v-else><span class="bye">BYE</span></div>
+                <div class="dupla">{{ isDuoCategory ? match.team1.team.join(' & ') : match.team1.team[0] }}</div>
+                <div class="vs">vs</div>
+                <div class="dupla" v-if="match.team2.id !== 'BYE'">{{ isDuoCategory ? match.team2.team.join(' & ') : match.team2.team[0] }}</div>
+                <div class="dupla" v-else><span class="bye">BYE</span></div>
               </div>
 
+              <!-- Coluna 2: Formulário de Agendamento -->
               <div class="form-agendamento">
                 <div class="input-agendamento">
                   <label>Quadra</label>
@@ -57,13 +59,15 @@
                 </button>
               </div>
 
+              <!-- Coluna 3: Formulário de Resultado -->
               <div class="form-resultado">
                 <div class="sets-container">
                   <div v-for="setIndex in numberOfSets" :key="setIndex" class="set-input">
                     <label>S{{ setIndex }}</label>
-                    <input type="number" class="input-resultado" v-model="results[getGlobalIndex(match.id)].sets[setIndex - 1].team1" :disabled="match.winner !== null || isFinished" />
-                    <span>x</span>
-                    <input type="number" class="input-resultado" v-model="results[getGlobalIndex(match.id)].sets[setIndex - 1].team2" :disabled="match.winner !== null || match.team2.id === 'BYE' || isFinished" />
+                    <div class="pontos-input">
+                      <input type="number" class="input-resultado" v-model="results[getGlobalIndex(match.id)].sets[setIndex - 1].team1" :disabled="match.winner !== null || isFinished" />
+                      <input type="number" class="input-resultado" v-model="results[getGlobalIndex(match.id)].sets[setIndex - 1].team2" :disabled="match.winner !== null || match.team2.id === 'BYE' || isFinished" />
+                    </div>
                   </div>
                 </div>
                 <button @click="submitResult(match, getGlobalIndex(match.id))" class="btn-salvar" :disabled="match.winner !== null || isSubmittingResult[match.id] || match.team2.id === 'BYE' || isFinished">
@@ -83,7 +87,6 @@ import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { callApi, callPublicApi } from '../services/api';
 
-// Interfaces
 interface Team { id: string; team: string[] }
 interface SetResult { team1: number | null; team2: number | null }
 interface Schedule { court: string; time: string }
@@ -108,7 +111,6 @@ type LocalSchedule = { court: string, time: string };
 const route = useRoute();
 const tournamentId = route.params.id as string;
 
-// Estado
 const torneio = ref<Tournament | null>(null);
 const draw = ref<Draw | null>(null);
 const results = ref<LocalResult[]>([]);
@@ -119,7 +121,6 @@ const isLoading = ref(true);
 const errorMessage = ref('');
 const isAdvancing = ref(false);
 
-// Propriedades Computadas
 const rounds = computed(() => {
   if (!draw.value) return [];
   return [...new Set(draw.value.matches.map(m => m.round))].sort((a, b) => a - b);
@@ -267,6 +268,8 @@ onMounted(fetchData);
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 .titulo {
   font-size: 2rem;
@@ -318,14 +321,14 @@ onMounted(fetchData);
   gap: 1.5rem;
 }
 .jogo-card {
-  display: grid;
-  grid-template-columns: 2fr 2fr 3fr;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   background-color: white;
   padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  gap: 2rem;
+  gap: 1.5rem;
 }
 .info-duplas {
   display: flex;
@@ -333,8 +336,6 @@ onMounted(fetchData);
   gap: 1rem;
   font-size: 1.1rem;
   font-weight: 500;
-  padding-right: 2rem;
-  border-right: 1px solid #eee;
 }
 .dupla {
   display: flex;
@@ -354,8 +355,10 @@ onMounted(fetchData);
   display: flex;
   align-items: flex-end;
   gap: 1rem;
-  padding-right: 2rem;
+  padding: 0 1.5rem;
+  border-left: 1px solid #eee;
   border-right: 1px solid #eee;
+  height: 100%;
 }
 .input-agendamento {
   display: flex;
@@ -401,8 +404,13 @@ onMounted(fetchData);
   font-weight: bold;
   color: #777;
 }
+.pontos-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .input-resultado {
-  width: 40px;
+  width: 50px;
   padding: 0.5rem 0;
   text-align: center;
   font-size: 1.1rem;
@@ -439,19 +447,31 @@ onMounted(fetchData);
   cursor: not-allowed;
 }
 
-@media (max-width: 768px) {
-  .jogo-card {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .info-duplas {
-    padding-bottom: 1.5rem;
+@media (max-width: 992px) {
+  .form-agendamento {
+    border-left: none;
+    border-right: none;
+    padding: 1.5rem 0;
+    border-top: 1px solid #eee;
     border-bottom: 1px solid #eee;
+    margin: 1.5rem 0;
+    width: 100%;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: center;
   }
-
-  .info-agendamento {
-    align-items: flex-start;
-  }
+  /*.form-agendamento {
+    border-left: none;
+    border-right: none;
+    padding: 1.5rem 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }*/
 }
 </style>

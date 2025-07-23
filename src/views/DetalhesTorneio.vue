@@ -30,7 +30,6 @@
       </div>
 
       <div class="acoes-principais">
-        <!-- ATUALIZAÇÃO: A lógica para mostrar o botão agora inclui as novas regras -->
         <router-link
           v-if="auth.tipoDeUtilizador.value !== 'organizador' && !inscricoesEncerradas"
           :to="`/torneio/${torneio.id}/inscrever`"
@@ -237,10 +236,5 @@ onMounted(async () => {
     flex-direction: column;
     gap: 1rem;
   }
-
-  .btn-inscrever, .btn-ver-chaves {
-    width: 100%;
-  }
 }
-
 </style>
